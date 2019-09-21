@@ -16,12 +16,21 @@ apply plugin: 'application'
 
 repositories {
 	mavenCentral()
+	maven {
+		url 'https://dl.bintray.com/kotlin/exposed/'
+	}
 }
 
 dependencies {
 	implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 	implementation 'io.javalin:javalin:3.5.0'
 	implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.28'
+	implementation "com.fasterxml.jackson.core:jackson-databind:2.10.0.pr1"
+	implementation group: 'org.jetbrains.exposed', name: 'exposed', version: '0.17.3'
+	implementation 'mysql:mysql-connector-java:8.0.17'
 
 	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.5.2'
+	testImplementation group: 'io.mockk', name: 'mockk', version: '1.9.3'
+	testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
+	testImplementation 'com.wix:wix-embedded-mysql:4.6.0'
 }
