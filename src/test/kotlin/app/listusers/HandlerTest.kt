@@ -4,6 +4,7 @@ import app.User
 import io.javalin.Javalin
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -21,20 +22,14 @@ object HandlerTest {
         val useCase = mockk<UseCase> {
             every { list() } returns listOf(User("1", "email", "Luís", "password"))
         }
-        Javalin.create { it.showJavalinBanner = false }
-                .get("/", Handler(useCase)).start(1234)
+        Javalin.create().get("/", Handler(useCase)).start(1234)
 
         val response = newHttpClient().send(
                 newBuilder().GET().uri(URI("http://localhost:1234")).build(), ofString()
         )
 
+        verify(exactly = 1) { useCase.list() }
         assertEquals(200, response.statusCode())
-        JSONAssert.assertEquals(
-                """ [ 
-                       { "id": "1", "name": "Luís", "email": "email" } 
-                    ] """.trimIndent(),
-                response.body(),
-                true
-        )
+        JSONAssert.assertEquals(""" [ { "id": "1", "name": "Luís", "email": "email" } ] """, response.body(), true)
     }
 }

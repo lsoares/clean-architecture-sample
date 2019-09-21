@@ -8,12 +8,12 @@ import org.jetbrains.exposed.sql.Database
 fun main() {
     val database = Database.Companion.connect(System.getProperty("DB_URL"), "com.mysql.cj.jdbc.Driver")
 
-    Javalin.create { it.showJavalinBanner = false }
+    Javalin.create()
             .routes {
-                get("/") { it.result("check health") }
+                get { it.result("check health") }
                 path("users") {
                     get(app.listusers.Handler(app.listusers.UseCase(app.listusers.Repository(database))))
                 }
             }
-            .start(7000)
+            .start(8080)
 }
