@@ -26,6 +26,7 @@ dependencies {
 	implementation 'io.javalin:javalin:3.5.0'
 	implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.28'
 	implementation "com.fasterxml.jackson.core:jackson-databind:2.10.0.pr1"
+	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.10.0.pr1'
 	implementation group: 'org.jetbrains.exposed', name: 'exposed', version: '0.17.3'
 	implementation 'mysql:mysql-connector-java:8.0.17'
 

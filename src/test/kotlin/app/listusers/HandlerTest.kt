@@ -5,6 +5,7 @@ import io.javalin.Javalin
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -29,7 +30,7 @@ object HandlerTest {
         )
 
         verify(exactly = 1) { useCase.list() }
-        assertEquals(200, response.statusCode())
+        assertEquals(HttpStatus.OK_200, response.statusCode())
         JSONAssert.assertEquals(""" [ { "id": "1", "name": "Luís", "email": "email" } ] """, response.body(), true)
     }
 }

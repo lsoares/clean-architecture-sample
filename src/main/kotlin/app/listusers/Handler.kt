@@ -12,6 +12,6 @@ class Handler(private val useCase: UseCase) : io.javalin.http.Handler {
     private fun List<User>.toRepresenter() =
             map { UserRepresenter(it.id, it.email, it.name) }
 
-    private class UserRepresenter(val id: String, val email: String, val name: String)
+    private class UserRepresenter(val id: String?, val email: String, val name: String)
 }
 
