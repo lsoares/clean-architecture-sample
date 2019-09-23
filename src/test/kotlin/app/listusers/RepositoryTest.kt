@@ -54,7 +54,5 @@ object RepositoryTest {
 
     @AfterAll
     @JvmStatic
-    fun cleanUp() {
-        dbServer.stop()
-    }
+    fun cleanUp() = dbServer.stop()
 }

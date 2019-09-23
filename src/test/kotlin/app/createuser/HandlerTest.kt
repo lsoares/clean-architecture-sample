@@ -19,6 +19,7 @@ import java.net.http.HttpResponse.BodyHandlers.ofString
 object HandlerTest {
 
     private val useCase = mockk<UseCase>()
+    private val httpClient = newHttpClient()
     private val user = User(email = "lsoares@gmail.com", name = "Luís Soares", password = "password")
 
     @BeforeAll
@@ -34,7 +35,7 @@ object HandlerTest {
                 .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
                 .uri(URI("http://localhost:1234")).build()
 
-        val response = newHttpClient().send(request, ofString())
+        val response = httpClient.send(request, ofString())
 
         verify(exactly = 1) { useCase.createUser(user) }
         assertEquals(HttpStatus.CREATED_201, response.statusCode())
@@ -47,7 +48,7 @@ object HandlerTest {
         val request = newBuilder()
                 .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
                 .uri(URI("http://localhost:1234")).build()
-        val response = newHttpClient().send(request, ofString())
+        val response = httpClient.send(request, ofString())
 
         verify(exactly = 1) { useCase.createUser(user) }
         assertEquals(HttpStatus.CONFLICT_409, response.statusCode())
