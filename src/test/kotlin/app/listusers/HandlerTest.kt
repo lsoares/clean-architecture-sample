@@ -1,6 +1,5 @@
 package app.listusers
 
-import app.User
 import io.javalin.Javalin
 import io.mockk.every
 import io.mockk.mockk
@@ -21,7 +20,7 @@ object HandlerTest {
     @Test
     fun `GIVEN a list of users, WHEN requesting it, THEN it converts it to a json representation`() {
         val useCase = mockk<UseCase> {
-            every { list() } returns listOf(User("1", "email", "Luís", "password"))
+            every { list() } returns listOf(User(id = "1", email = "email", name = "Luís"))
         }
         Javalin.create().get("/", Handler(useCase)).start(1234)
 

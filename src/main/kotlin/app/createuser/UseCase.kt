@@ -1,11 +1,9 @@
 package app.createuser
 
-import app.User
-
-class UseCase(private val repository: Repository) {
+class UseCase(private val repository: Repository, val passwordEncoder: PasswordEncoder) {
 
     fun createUser(user: User) {
-        repository.createUser(user)
+        repository.createUser(user.copy(password = passwordEncoder.encode(user.password)))
     }
 
     class UserAlreadyExists : Exception()

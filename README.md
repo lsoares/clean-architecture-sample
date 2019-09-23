@@ -5,12 +5,15 @@ I created this rpo for multiple reasons:
 - Fun
 
 ## Principles
-- TDD
+- Top-down approach
 - Clean architecture
   - Separation of config from app
   - Dealing with exceptions
 - Package by feature
 - Command / query
-- Given, When, Then
+- Testing
+  - TDD
+  - Given, When, Then
+  - Evident data
 - REST maturity level
-- Top-down approach
+- DTOs

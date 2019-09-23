@@ -1,6 +1,5 @@
 package app.createuser
 
-import app.User
 import io.javalin.http.Context
 import org.eclipse.jetty.http.HttpStatus
 

@@ -1,6 +1,5 @@
 package app.listusers
 
-import app.User
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.ScriptResolver.classPathScript
@@ -46,8 +45,8 @@ object RepositoryTest {
         val result = Repository(dbClient).list()
 
         val expected = setOf(
-                User("abc123", "lsoares@gmail.com", "Luís Soares", "hashedpassword"),
-                User("bcd123", "ms123@gmail.com", "Miguel Soares", "fdsgerth56ut45")
+                User("abc123", "lsoares@gmail.com", "Luís Soares"),
+                User("bcd123", "ms123@gmail.com", "Miguel Soares")
         )
         assertEquals(expected, result.toSet())
     }

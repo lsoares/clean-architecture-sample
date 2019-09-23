@@ -12,7 +12,9 @@ fun main() {
                 get { it.result("check health") }
                 path("users") {
                     get(app.listusers.Handler(app.listusers.UseCase(app.listusers.Repository(database))))
-                    post(app.createuser.Handler(app.createuser.UseCase(app.createuser.Repository())))
+                    post(app.createuser.Handler(
+                            app.createuser.UseCase(repository = app.createuser.Repository(), passwordEncoder = app.createuser.PasswordEncoder()))
+                    )
                 }
             }
             .start(8080)

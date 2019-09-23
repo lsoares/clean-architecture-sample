@@ -1,6 +1,5 @@
 package app.listusers
 
-import app.User
 import io.javalin.http.Context
 
 class Handler(private val useCase: UseCase) : io.javalin.http.Handler {
