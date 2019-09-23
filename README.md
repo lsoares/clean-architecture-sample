@@ -7,13 +7,15 @@ I created this rpo for multiple reasons:
 ## Principles
 - Top-down approach
 - Clean architecture
-  - Separation of config from app
-  - Dealing with exceptions
-- Package by feature
-- Command / query
+    - Separation of config from app
+    - Dealing with exceptions
 - Testing
-  - TDD
-  - Given, When, Then
-  - Evident data
-- REST maturity level
-- DTOs
+    - TDD
+    - Given, When, Then
+    - Evident data
+- Package by feature
+- Use cases
+    - DTOs
+    - Command / query
+- Handlers
+    - REST maturity level

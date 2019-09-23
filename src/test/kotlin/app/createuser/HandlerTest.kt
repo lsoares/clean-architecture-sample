@@ -3,11 +3,8 @@ package app.createuser
 import io.javalin.Javalin
 import io.mockk.*
 import org.eclipse.jetty.http.HttpStatus
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.BodyPublishers.ofString
@@ -20,11 +17,12 @@ object HandlerTest {
     private val useCase = mockk<UseCase>()
     private val httpClient = newHttpClient()
     private val user = User(email = "lsoares@gmail.com", name = "Luís Soares", password = "password")
+    private lateinit var server: Javalin
 
     @BeforeAll
     @JvmStatic
     fun setup() {
-        Javalin.create().post("/", Handler(useCase)).start(1234)
+        server = Javalin.create().post("/", Handler(useCase)).start(1234)
     }
 
     @Test
@@ -54,5 +52,11 @@ object HandlerTest {
     }
 
     @AfterEach
-    fun reset() = clearAllMocks()
+    fun afterEach() = clearAllMocks()
+
+    @AfterAll
+    @JvmStatic
+    fun tearDown() {
+        server.stop()
+    }
 }
