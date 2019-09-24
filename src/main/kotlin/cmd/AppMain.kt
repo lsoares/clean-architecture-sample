@@ -13,7 +13,7 @@ fun main() {
                 path("users") {
                     get(app.listusers.Handler(app.listusers.UseCase(app.listusers.Repository(database))))
                     post(app.createuser.Handler(
-                            app.createuser.UseCase(repository = app.createuser.Repository(), passwordEncoder = app.createuser.PasswordEncoder()))
+                            app.createuser.UseCase(repository = app.createuser.Repository(database), passwordEncoder = app.createuser.PasswordEncoder()))
                     )
                 }
             }

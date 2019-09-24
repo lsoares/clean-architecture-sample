@@ -9,8 +9,11 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
 @DisplayName("List users repository")
 object RepositoryTest {
@@ -20,15 +23,12 @@ object RepositoryTest {
 
     @BeforeAll
     @JvmStatic
-    fun setupDb() {
+    fun setup() {
         val config = aMysqldConfig(v5_7_latest).withPort(3306).withUser("user", "pass").build()
         dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
         dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3306/test_schema", "com.mysql.cj.jdbc.Driver")
-    }
 
-    @BeforeEach
-    fun setupData() {
-        transaction {
+        transaction(dbClient) {
             SchemaUtils.create(object : Table("users") {
                 val id = varchar("id", 10).primaryKey()
                 val email = varchar("email", 50)
@@ -36,22 +36,20 @@ object RepositoryTest {
                 val password = varchar("password", 50)
             })
         }
+        dbServer.executeScripts("test_schema", classPathScript("add_users.sql"))
     }
 
     @Test
     fun `GIVEN a list of users in the database, WHEN requesting it, THEN it returns it`() {
-        dbServer.executeScripts("test_schema", classPathScript("add_users.sql"))
-
         val result = Repository(dbClient).list()
 
-        val expected = setOf(
+        assertEquals(setOf(
                 User("abc123", "lsoares@gmail.com", "Luís Soares"),
                 User("bcd123", "ms123@gmail.com", "Miguel Soares")
-        )
-        assertEquals(expected, result.toSet())
+        ), result.toSet())
     }
 
     @AfterAll
     @JvmStatic
-    fun cleanUp() = dbServer.stop()
+    fun tearDown() = dbServer.stop()
 }
