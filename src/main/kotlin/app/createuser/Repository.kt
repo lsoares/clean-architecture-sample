@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class Repository(private val database: Database) {
 
     fun createUser(user: User) {
+        // TODO : deal with repeated users
         transaction(database) {
             Users.insert {
                 it[email] = user.email
