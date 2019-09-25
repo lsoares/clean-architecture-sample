@@ -1,4 +1,4 @@
-package app.createuser
+package createuser
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals

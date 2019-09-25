@@ -1,12 +1,12 @@
-package app.createuser
+package createuser
 
-import app.createuser.RepositoryTest.Users.email
-import app.createuser.RepositoryTest.Users.id
-import app.createuser.RepositoryTest.Users.name
-import app.createuser.RepositoryTest.Users.password
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.config.MysqldConfig
 import com.wix.mysql.distribution.Version
+import createuser.RepositoryTest.Users.email
+import createuser.RepositoryTest.Users.id
+import createuser.RepositoryTest.Users.name
+import createuser.RepositoryTest.Users.password
 import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils

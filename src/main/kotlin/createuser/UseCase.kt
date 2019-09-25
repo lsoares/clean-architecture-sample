@@ -1,4 +1,4 @@
-package app.createuser
+package createuser
 
 class UseCase(private val repository: Repository, val passwordEncoder: PasswordEncoder) {
 

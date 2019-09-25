@@ -1,4 +1,4 @@
-package app.createuser
+package createuser
 
 import io.javalin.http.Context
 import org.eclipse.jetty.http.HttpStatus

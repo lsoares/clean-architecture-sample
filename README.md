@@ -12,6 +12,7 @@ I created this repo for multiple reasons:
     - TDD
     - Given, When, Then
     - Evident data
+    - Table driven testing
 - Package by feature
 - Use cases
     - DTOs

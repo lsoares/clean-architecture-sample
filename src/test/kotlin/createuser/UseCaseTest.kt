@@ -1,4 +1,4 @@
-package app.createuser
+package createuser
 
 import io.mockk.*
 import org.junit.jupiter.api.Test

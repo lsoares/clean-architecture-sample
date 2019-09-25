@@ -1,13 +1,13 @@
-package app.listusers
+package listusers
 
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.ScriptResolver.classPathScript
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version.v5_7_latest
+import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -29,8 +29,7 @@ object RepositoryTest {
         dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3306/test_schema", "com.mysql.cj.jdbc.Driver")
 
         transaction(dbClient) {
-            SchemaUtils.create(object : Table("users") {
-                val id = varchar("id", 10).primaryKey()
+            SchemaUtils.create(object : IntIdTable("users") {
                 val email = varchar("email", 50)
                 val name = varchar("name", 50)
                 val password = varchar("password", 50)
@@ -44,8 +43,8 @@ object RepositoryTest {
         val result = Repository(dbClient).list()
 
         assertEquals(setOf(
-                User("abc123", "lsoares@gmail.com", "Luís Soares"),
-                User("bcd123", "ms123@gmail.com", "Miguel Soares")
+                User(id = 1, email = "lsoares@gmail.com", name = "Luís Soares"),
+                User(id = 2, email = "ms123@gmail.com", name = "Miguel Soares")
         ), result.toSet())
     }
 

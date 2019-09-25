@@ -1,4 +1,4 @@
-package app.createuser
+package createuser
 
 import io.javalin.Javalin
 import io.mockk.*

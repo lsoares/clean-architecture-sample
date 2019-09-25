@@ -1,4 +1,4 @@
-package app.listusers
+package listusers
 
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
@@ -29,7 +29,7 @@ object HandlerTest {
 
     @Test
     fun `GIVEN a list of users, WHEN requesting it, THEN it converts it to a json representation`() {
-        every { useCase.list() } returns listOf(User(id = "1", email = "email", name = "Luís"))
+        every { useCase.list() } returns listOf(User(id = 1, email = "email", name = "Luís"))
 
         val response = newHttpClient().send(
                 newBuilder().GET().uri(URI("http://localhost:1234")).build(), ofString()
@@ -37,7 +37,7 @@ object HandlerTest {
 
         verify(exactly = 1) { useCase.list() }
         assertEquals(HttpStatus.OK_200, response.statusCode())
-        JSONAssert.assertEquals(""" [ { "id": "1", "name": "Luís", "email": "email" } ] """, response.body(), true)
+        JSONAssert.assertEquals(""" [ { "id": 1, "name": "Luís", "email": "email" } ] """, response.body(), true)
     }
 
     @AfterEach

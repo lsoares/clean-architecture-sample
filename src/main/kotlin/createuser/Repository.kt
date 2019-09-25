@@ -1,4 +1,4 @@
-package app.createuser
+package createuser
 
 import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.Database
