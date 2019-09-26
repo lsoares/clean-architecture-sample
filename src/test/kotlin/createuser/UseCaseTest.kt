@@ -1,8 +1,10 @@
 package createuser
 
 import io.mockk.*
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
+@DisplayName("Create user use case")
 object UseCaseTest {
 
     @Test

@@ -5,15 +5,17 @@ I created this repo for multiple reasons:
 - Fun
 
 ## Principles
-- Clean architecture
+- Architecture
+    - 3 tier pattern
+    - Clean architecture
     - Separation of config from app
     - Dealing with exceptions
+    - Package by feature
 - Testing
     - TDD
     - Given, When, Then
     - Evident data
     - Table driven testing
-- Package by feature
 - Use cases
     - DTOs
     - Command / query

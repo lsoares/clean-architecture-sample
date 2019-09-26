@@ -1,3 +1,4 @@
+import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
@@ -5,6 +6,8 @@ import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert
 import java.net.URI
@@ -16,13 +19,17 @@ import java.net.http.HttpResponse.BodyHandlers.ofString
 
 object IntegrationTest {
 
+    private lateinit var webAppConfig: WebAppConfig
+    private lateinit var embeddedMysql: EmbeddedMysql
     private val httpClient = newHttpClient()
 
-    @Test
-    fun `GIVEN a json, WHEN posting it, THEN it creates a user`() {
+    @BeforeAll
+    @JvmStatic
+    fun setup() {
         val config = aMysqldConfig(Version.v5_7_latest).withPort(3306).withUser("user", "pass").build()
-        val embeddedMysql = anEmbeddedMysql(config).addSchema("test_schema").start()
+        embeddedMysql = anEmbeddedMysql(config).addSchema("test_schema").start()
         val dbUrl = "jdbc:mysql://user:pass@localhost:3306/test_schema"
+
         transaction(Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver")) {
             SchemaUtils.create(object : IntIdTable("users") {
                 val email = varchar("email", 50)
@@ -31,9 +38,12 @@ object IntegrationTest {
             })
         }
 
-        val webAppConfig = WebAppConfig(dbUrl = dbUrl, port = 8081)
+        webAppConfig = WebAppConfig(dbUrl = dbUrl, port = 8081)
         webAppConfig.start()
+    }
 
+    @Test
+    fun `GIVEN a json, WHEN posting it, THEN it creates a user`() {
         httpClient.send(newBuilder()
                 .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
                 .uri(URI("http://localhost:8081/users")).build(), discarding()
@@ -48,8 +58,12 @@ object IntegrationTest {
         JSONAssert.assertEquals(""" [
             { "id": 1, "name": "Luís Soares", "email": "lsoares@gmail.com" },
             { "id": 2, "name": "Miguel Soares", "email": "miguel.s@gmail.com" }
-        ] """.trimIndent(), response.body(), true)
+        ] """, response.body(), true)
+    }
 
+    @AfterAll
+    @JvmStatic
+    fun afterAll() {
         webAppConfig.stop()
         embeddedMysql.stop()
     }
