@@ -1,6 +1,7 @@
 package createuser
 
-import org.jetbrains.exposed.dao.IntIdTable
+import Users
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -8,19 +9,18 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class Repository(private val database: Database) {
 
     fun createUser(user: User) {
-        // TODO : deal with repeated users
         transaction(database) {
-            Users.insert {
-                it[email] = user.email
-                it[name] = user.name
-                it[password] = user.password
+            try {
+                Users.insert {
+                    it[email] = user.email
+                    it[name] = user.name
+                    it[password] = user.password
+                }
+            } catch (ex: ExposedSQLException) {
+                if (ex.message != null && ex.message!!.contains("users_email_unique")) {
+                    throw UserAlreadyExists()
+                } else throw ex
             }
         }
-    }
-
-    object Users : IntIdTable() {
-        val email = varchar("email", 50)
-        val name = varchar("name", 50)
-        val password = varchar("password", 50)
     }
 }

@@ -9,7 +9,7 @@ class Handler(private val useCase: UseCase) : io.javalin.http.Handler {
         try {
             useCase.createUser(ctx.body<UserRepresenter>().toUser())
             ctx.status(HttpStatus.CREATED_201)
-        } catch (ex: UseCase.UserAlreadyExists) {
+        } catch (ex: UserAlreadyExists) {
             ctx.status(HttpStatus.CONFLICT_409)
         }
     }

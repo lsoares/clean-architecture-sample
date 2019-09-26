@@ -61,6 +61,8 @@ object IntegrationTest {
         ] """, response.body(), true)
     }
 
+    // TODO: test user already exists
+
     @AfterAll
     @JvmStatic
     fun afterAll() {

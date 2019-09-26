@@ -40,11 +40,11 @@ object HandlerTest {
 
     @Test
     fun `GIVEN an existing user json, WHEN posting it, THEN it handles the use case exception with 409`() {
-        every { useCase.createUser(user) } throws UseCase.UserAlreadyExists()
-
+        every { useCase.createUser(user) } throws UserAlreadyExists()
         val request = newBuilder()
                 .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
                 .uri(URI("http://localhost:1234")).build()
+
         val response = httpClient.send(request, ofString())
 
         verify(exactly = 1) { useCase.createUser(user) }
@@ -56,7 +56,7 @@ object HandlerTest {
 
     @AfterAll
     @JvmStatic
-    fun tearDown() {
+    fun afterAll() {
         server.stop()
     }
 }
