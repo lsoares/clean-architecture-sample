@@ -1,11 +1,15 @@
-
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
+import org.eclipse.jetty.http.HttpStatus
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert
 import repository.mysql.Schema
@@ -21,6 +25,7 @@ object IntegrationTest {
     private lateinit var webAppConfig: WebAppConfig
     private lateinit var embeddedMysql: EmbeddedMysql
     private val httpClient = newHttpClient()
+    private lateinit var dbClient: Database
 
     @BeforeAll
     @JvmStatic
@@ -29,10 +34,16 @@ object IntegrationTest {
         embeddedMysql = anEmbeddedMysql(config).addSchema("test_schema").start()
         val dbUrl = "jdbc:mysql://user:pass@localhost:3306/test_schema"
 
-        Schema(Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver")).create()
+        dbClient = Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver")
+        Schema(dbClient).create()
 
         webAppConfig = WebAppConfig(dbUrl = dbUrl, port = 8081)
         webAppConfig.start()
+    }
+
+    @BeforeEach
+    fun beforeEach() {
+        transaction(dbClient) { Schema.Users.deleteAll() }
     }
 
     @Test
@@ -54,7 +65,23 @@ object IntegrationTest {
         ] """, response.body(), true)
     }
 
-    // TODO: test user already exists
+    @Test
+    fun `GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`() {
+        val creationRequest = newBuilder()
+                .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
+                .uri(URI("http://localhost:8081/users")).build()
+        val creation1Response = httpClient.send(creationRequest, discarding())
+        assertEquals(HttpStatus.CREATED_201, creation1Response.statusCode())
+
+        val creation2Response = httpClient.send(creationRequest, ofString())
+        assertEquals(HttpStatus.CONFLICT_409, creation2Response.statusCode())
+
+        val listResponse = httpClient.send(newBuilder().GET().uri(URI("http://localhost:8081/users")).build(), ofString())
+        JSONAssert.assertEquals(
+                """ [ { "name": "Luís Soares", "email": "lsoares@gmail.com" }] """,
+                listResponse.body(), false
+        )
+    }
 
     @AfterAll
     @JvmStatic
