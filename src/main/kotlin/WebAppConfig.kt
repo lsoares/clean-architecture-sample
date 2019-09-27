@@ -2,9 +2,10 @@ import createuser.PasswordEncoder
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
 import listusers.Handler
-import listusers.Repository
 import listusers.UseCase
 import org.jetbrains.exposed.sql.Database
+import repository.mysql.Schema
+import repository.mysql.UserRepository
 
 class WebAppConfig(dbUrl: String, val port: Int) {
 
@@ -12,15 +13,16 @@ class WebAppConfig(dbUrl: String, val port: Int) {
 
     init {
         val database = Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver")
+        Schema(database).create()
+        val userRepo = UserRepository(database)
 
         javalinApp = Javalin.create()
                 .routes {
                     get { it.result("check health") }
                     path("users") {
-                        get(Handler(UseCase(Repository(database))))
-                        post(createuser.Handler(
-                                createuser.UseCase(repository = createuser.Repository(database), passwordEncoder = PasswordEncoder()))
-                        )
+                        get(Handler(UseCase(userRepo)))
+                        post(
+                                createuser.Handler(createuser.UseCase(userRepo, PasswordEncoder())))
                     }
                 }
     }

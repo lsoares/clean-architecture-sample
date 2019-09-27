@@ -1,20 +1,20 @@
-package listusers
+package repository.mysql
 
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.ScriptResolver.classPathScript
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version.v5_7_latest
+import listusers.User
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import repository.mysql.Schema
 
 @DisplayName("List users repository")
-object RepositoryTest {
+object ListUsersRepositoryTest {
 
     private lateinit var dbServer: EmbeddedMysql
     private lateinit var dbClient: Database
@@ -32,7 +32,7 @@ object RepositoryTest {
 
     @Test
     fun `GIVEN a list of users in the database, WHEN requesting it, THEN it returns it`() {
-        val result = Repository(dbClient).list()
+        val result = UserRepository(dbClient).findAll()
 
         assertEquals(setOf(
                 User(id = 1, email = "lsoares@gmail.com", name = "Luís Soares"),

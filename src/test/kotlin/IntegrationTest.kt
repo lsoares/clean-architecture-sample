@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert
 import repository.mysql.Schema
+import repository.mysql.UserRepository
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.BodyPublishers.ofString
@@ -43,7 +44,7 @@ object IntegrationTest {
 
     @BeforeEach
     fun beforeEach() {
-        transaction(dbClient) { Schema.Users.deleteAll() }
+        transaction(dbClient) { UserRepository.Users.deleteAll() }
     }
 
     @Test

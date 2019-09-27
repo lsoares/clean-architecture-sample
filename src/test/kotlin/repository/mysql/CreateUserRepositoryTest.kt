@@ -1,9 +1,11 @@
-package createuser
+package repository.mysql
 
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
+import createuser.User
+import createuser.UserAlreadyExists
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.count
 import org.jetbrains.exposed.sql.deleteAll
@@ -12,11 +14,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import repository.mysql.Schema
-import repository.mysql.Schema.Users
+import repository.mysql.UserRepository.Users
 
 @DisplayName("Create user repository")
-object RepositoryTest {
+object CreateUserRepositoryTest {
 
     private lateinit var dbServer: EmbeddedMysql
     private lateinit var dbClient: Database
@@ -39,7 +40,7 @@ object RepositoryTest {
     fun `GIVEN a user, WHEN storing it, THEN it's persisted and gets an id`() {
         val user = User("abc123", "lsoares@gmail.com", "Luís Soares")
 
-        Repository(dbClient).createUser(user)
+        UserRepository(dbClient).create(user)
 
         val row = transaction(dbClient) {
             Users.select { Users.email eq user.email }.first()
@@ -52,9 +53,9 @@ object RepositoryTest {
     fun `GIVEN an existing user, WHEN storing it, THEN it's not persisted and an exception is thrown`() {
         val user = User("abc123", "lsoares@gmail.com", "Luís Soares")
 
-        Repository(dbClient).createUser(user)
+        UserRepository(dbClient).create(user)
         assertThrows<UserAlreadyExists> {
-            Repository(dbClient).createUser(user)
+            UserRepository(dbClient).create(user)
         }
 
         transaction(dbClient) {

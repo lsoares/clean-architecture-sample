@@ -1,10 +1,10 @@
 package createuser
 
-class UseCase(private val repository: Repository, private val passwordEncoder: PasswordEncoder) {
+import repository.UserRepositoryCrud
+
+class UseCase(private val userRepo: UserRepositoryCrud, private val passwordEncoder: PasswordEncoder) {
 
     fun createUser(user: User) {
-        repository.createUser(
-                user.copy(password = passwordEncoder.encode(user.password))
-        )
+        userRepo.create(user.copy(password = passwordEncoder.encode(user.password)))
     }
 }
