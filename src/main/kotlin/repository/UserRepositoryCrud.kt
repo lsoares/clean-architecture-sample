@@ -1,6 +1,9 @@
 package repository
 
+import domain.entities.UserInList
+import domain.entities.UserToCreate
+
 interface UserRepositoryCrud {
-    fun findAll(): List<listusers.User>
-    fun create(user: createuser.User)
+    fun findAll(): List<UserInList>
+    fun create(user: UserToCreate)
 }

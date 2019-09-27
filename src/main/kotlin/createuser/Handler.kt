@@ -1,5 +1,6 @@
 package createuser
 
+import domain.entities.UserToCreate
 import io.javalin.http.Context
 import org.eclipse.jetty.http.HttpStatus
 
@@ -15,6 +16,6 @@ class Handler(private val useCase: UseCase) : io.javalin.http.Handler {
     }
 
     private class UserRepresenter(val email: String, val name: String, val password: String) {
-        fun toUser() = User(email = email, name = name, password = password)
+        fun toUser() = UserToCreate(email = email, name = name, password = password)
     }
 }

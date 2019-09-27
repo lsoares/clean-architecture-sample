@@ -1,6 +1,8 @@
 package repository.mysql
 
 import createuser.UserAlreadyExists
+import domain.entities.UserInList
+import domain.entities.UserToCreate
 import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
@@ -17,15 +19,15 @@ class UserRepository(private val database: Database) : UserRepositoryCrud {
         val password = varchar("password", 50)
     }
 
-    override fun findAll(): List<listusers.User> {
+    override fun findAll(): List<UserInList> {
         return transaction(database) {
             Users.selectAll().map {
-                listusers.User(id = it[Users.id].value, email = it[Users.email], name = it[Users.name])
+                UserInList(id = it[Users.id].value, email = it[Users.email], name = it[Users.name])
             }
         }
     }
 
-    override fun create(user: createuser.User) {
+    override fun create(user: UserToCreate) {
         transaction(database) {
             try {
                 Users.insert {

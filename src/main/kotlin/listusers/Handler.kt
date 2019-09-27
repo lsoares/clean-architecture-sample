@@ -1,5 +1,6 @@
 package listusers
 
+import domain.entities.UserInList
 import io.javalin.http.Context
 
 class Handler(private val useCase: UseCase) : io.javalin.http.Handler {
@@ -8,7 +9,7 @@ class Handler(private val useCase: UseCase) : io.javalin.http.Handler {
         ctx.json(useCase.list().toRepresenter())
     }
 
-    private fun List<User>.toRepresenter() =
+    private fun List<UserInList>.toRepresenter() =
             map { UserRepresenter(it.id, it.email, it.name) }
 
     private class UserRepresenter(val id: Int, val email: String, val name: String)

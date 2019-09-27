@@ -1,5 +1,6 @@
 package createuser
 
+import domain.entities.UserToCreate
 import io.mockk.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -10,7 +11,7 @@ object UseCaseTest {
 
     @Test
     fun `GIVEN a user to create, WHEN running the use case, THEN it calls the repo`() {
-        val user = User(email = "lsoares@gmail.com", name = "Luís Soares", password = "toEncode")
+        val user = UserToCreate(email = "lsoares@gmail.com", name = "Luís Soares", password = "toEncode")
         val repository = mockk<UserRepositoryCrud> {
             every { create(user.copy(password = "encoded")) } just Runs
         }

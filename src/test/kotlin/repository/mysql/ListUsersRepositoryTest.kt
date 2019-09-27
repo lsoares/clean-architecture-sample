@@ -5,7 +5,7 @@ import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.ScriptResolver.classPathScript
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version.v5_7_latest
-import listusers.User
+import domain.entities.UserInList
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -35,8 +35,8 @@ object ListUsersRepositoryTest {
         val result = UserRepository(dbClient).findAll()
 
         assertEquals(setOf(
-                User(id = 1, email = "lsoares@gmail.com", name = "Luís Soares"),
-                User(id = 2, email = "ms123@gmail.com", name = "Miguel Soares")
+                UserInList(id = 1, email = "lsoares@gmail.com", name = "Luís Soares"),
+                UserInList(id = 2, email = "ms123@gmail.com", name = "Miguel Soares")
         ), result.toSet())
     }
 
