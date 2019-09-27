@@ -1,9 +1,9 @@
 package listusers
 
-import Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import repository.mysql.Schema.Users
 
 class Repository(private val database: Database) {
 

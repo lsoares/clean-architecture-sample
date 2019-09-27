@@ -1,10 +1,10 @@
 package createuser
 
-import Users
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
+import repository.mysql.Schema.Users
 
 class Repository(private val database: Database) {
 
