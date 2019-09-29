@@ -4,13 +4,14 @@ import domain.entities.UserToCreate
 import io.mockk.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import repository.UserRepositoryCrud
 
 @DisplayName("Create user use case")
 object UseCaseTest {
 
     @Test
-    fun `GIVEN a user to create, WHEN running the use case, THEN it calls the repo`() {
+    fun `GIVEN a valid user, WHEN running the use case, THEN it calls the repo`() {
         val user = UserToCreate(email = "lsoares@gmail.com", name = "Luís Soares", password = "toEncode")
         val repository = mockk<UserRepositoryCrud> {
             every { create(user.copy(password = "encoded")) } just Runs
@@ -25,5 +26,15 @@ object UseCaseTest {
         verify(exactly = 1) { repository.create(user.copy(password = "encoded")) }
     }
 
-    // TODO: deal with user exists
+    @Test
+    fun `GIVEN an invalid user, WHEN running the use case, THEN it throws exception and does not call the repo`() {
+        val repository = mockk<UserRepositoryCrud>()
+
+        assertThrows<InvalidUserException> {
+            UseCase(repository, PasswordEncoder())
+                .createUser(UserToCreate(email = "lsoares", name = "L", password = "1"))
+        }
+
+        verify { repository wasNot Called }
+    }
 }

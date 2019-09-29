@@ -21,12 +21,24 @@ repositories {
 	}
 }
 
+compileKotlin {
+	kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+	kotlinOptions.jvmTarget = "1.8"
+}
+
 dependencies {
 	implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
 	implementation 'io.javalin:javalin:3.5.0'
 	implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.28'
 	implementation "com.fasterxml.jackson.core:jackson-databind:2.10.0.pr1"
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.10.0.pr1'
+
+	implementation 'org.hibernate.validator:hibernate-validator:6.1.0.Alpha6'
+	implementation 'org.glassfish:javax.el:3.0.1-b11'
+
 	implementation group: 'org.jetbrains.exposed', name: 'exposed', version: '0.17.3'
 	implementation 'mysql:mysql-connector-java:8.0.17'
 

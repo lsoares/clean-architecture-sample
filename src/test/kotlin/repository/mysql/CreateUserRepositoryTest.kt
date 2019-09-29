@@ -25,9 +25,9 @@ object CreateUserRepositoryTest {
     @BeforeAll
     @JvmStatic
     fun beforeAll() {
-        val config = aMysqldConfig(Version.v5_7_latest).withPort(3306).withUser("user", "pass").build()
+        val config = aMysqldConfig(Version.v5_7_latest).withPort(3302).withUser("user", "pass").build()
         dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
-        dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3306/test_schema", "com.mysql.cj.jdbc.Driver")
+        dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3302/test_schema", "com.mysql.cj.jdbc.Driver")
         Schema(dbClient).create()
     }
 

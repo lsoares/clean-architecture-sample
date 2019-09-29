@@ -22,9 +22,9 @@ object ListUsersRepositoryTest {
     @BeforeAll
     @JvmStatic
     fun setup() {
-        val config = aMysqldConfig(v5_7_latest).withPort(3306).withUser("user", "pass").build()
+        val config = aMysqldConfig(v5_7_latest).withPort(3300).withUser("user", "pass").build()
         dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
-        dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3306/test_schema", "com.mysql.cj.jdbc.Driver")
+        dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3300/test_schema", "com.mysql.cj.jdbc.Driver")
 
         Schema(dbClient).create()
         dbServer.executeScripts("test_schema", classPathScript("add_users.sql"))
@@ -42,5 +42,5 @@ object ListUsersRepositoryTest {
 
     @AfterAll
     @JvmStatic
-    fun tearDown() = dbServer.stop()
+    fun afterAll() = dbServer.stop()
 }
