@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert
-import repository.mysql.Schema
 import repository.mysql.UserRepository
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
@@ -35,7 +34,7 @@ object IntegrationTest {
         dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
         val dbUrl = "jdbc:mysql://user:pass@localhost:3301/test_schema"
         dbClient = Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver")
-        Schema(dbClient).create()
+        UserRepository(dbClient).createSchema()
 
         webAppConfig = WebAppConfig(dbUrl = dbUrl, port = 8081)
         webAppConfig.start()

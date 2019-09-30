@@ -28,7 +28,7 @@ object CreateUserRepositoryTest {
         val config = aMysqldConfig(Version.v5_7_latest).withPort(3302).withUser("user", "pass").build()
         dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
         dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3302/test_schema", "com.mysql.cj.jdbc.Driver")
-        Schema(dbClient).create()
+        UserRepository(dbClient).createSchema()
     }
 
     @BeforeEach
@@ -38,20 +38,23 @@ object CreateUserRepositoryTest {
 
     @Test
     fun `GIVEN a user, WHEN storing it, THEN it's persisted and gets an id`() {
-        val user = UserEntity(null, "abc123", "lsoares@gmail.com", "Luís Soares")
+        val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed")
 
         UserRepository(dbClient).save(user)
 
         val row = transaction(dbClient) {
             Users.select { Users.email eq user.email }.first()
         }
-        assertEquals(user, UserEntity(email = row[Users.email], password = row[Users.password], name = row[Users.name]))
+        assertEquals(
+            user,
+            UserEntity(email = row[Users.email], hashedPassword = row[Users.hashedPassword], name = row[Users.name])
+        )
         assertTrue(row[Users.id].value > 0)
     }
 
     @Test
     fun `GIVEN an existing user, WHEN storing it, THEN it's not persisted and an exception is thrown`() {
-        val user = UserEntity(null, "abc123", "lsoares@gmail.com", "Luís Soares")
+        val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed")
 
         UserRepository(dbClient).save(user)
         assertThrows<UserAlreadyExists> {

@@ -26,7 +26,7 @@ object ListUsersRepositoryTest {
         dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
         dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3300/test_schema", "com.mysql.cj.jdbc.Driver")
 
-        Schema(dbClient).create()
+        UserRepository(dbClient).createSchema()
         // TODO: don't use a file insert from here
         dbServer.executeScripts("test_schema", classPathScript("add_users.sql"))
     }
@@ -37,8 +37,8 @@ object ListUsersRepositoryTest {
 
         assertEquals(
             setOf(
-                UserEntity(id = 1, email = "lsoares@gmail.com", name = "Luís Soares", password = "hashed1"),
-                UserEntity(id = 2, email = "ms123@gmail.com", name = "Miguel Soares", password = "hashed2")
+                UserEntity(id = 1, email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed1"),
+                UserEntity(id = 2, email = "ms123@gmail.com", name = "Miguel Soares", hashedPassword = "hashed2")
             ), result.toSet()
         )
     }

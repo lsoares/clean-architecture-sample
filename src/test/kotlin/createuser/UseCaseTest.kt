@@ -14,7 +14,7 @@ object UseCaseTest {
     fun `GIVEN a valid user, WHEN running the use case, THEN it calls the repo`() {
         val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", password = "toEncode")
         val repository = mockk<UserRepositoryCrud> {
-            every { save(user.copy(password = "encoded")) } just Runs
+            every { save(user.copy(hashedPassword = "encoded")) } just Runs
         }
         val passwordEncoder = mockk<PasswordEncoder> {
             every { encode("toEncode") } returns "encoded"
@@ -23,7 +23,7 @@ object UseCaseTest {
         UseCase(repository, passwordEncoder).createUser(user)
 
         verify(exactly = 1) { passwordEncoder.encode("toEncode") }
-        verify(exactly = 1) { repository.save(user.copy(password = "encoded")) }
+        verify(exactly = 1) { repository.save(user.copy(hashedPassword = "encoded")) }
     }
 
     @Test
@@ -32,7 +32,7 @@ object UseCaseTest {
 
         assertThrows<InvalidUserException> {
             UseCase(repository, PasswordEncoder())
-                .createUser(UserEntity(email = "lsoares", name = "L", password = "1"))
+                .createUser(UserEntity(email = "lsoares", name = "L", hashedPassword = "1"))
         }
 
         verify { repository wasNot Called }

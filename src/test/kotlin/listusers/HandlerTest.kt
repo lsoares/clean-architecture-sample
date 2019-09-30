@@ -30,7 +30,14 @@ object HandlerTest {
 
     @Test
     fun `GIVEN a list of users, WHEN requesting it, THEN it converts it to a json representation`() {
-        every { useCase.list() } returns listOf(UserEntity(id = 1, email = "email", name = "Luís", password = "hashed"))
+        every { useCase.list() } returns listOf(
+            UserEntity(
+                id = 1,
+                email = "email",
+                name = "Luís",
+                hashedPassword = "hashed"
+            )
+        )
 
         val response = newHttpClient().send(
                 newBuilder().GET().uri(URI("http://localhost:1234")).build(), ofString()

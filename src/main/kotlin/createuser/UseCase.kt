@@ -13,6 +13,12 @@ class UseCase(private val userRepo: UserRepositoryCrud, private val passwordEnco
             if (isNotEmpty()) throw InvalidUserException(this)
         }
 
-        userRepo.save(user.copy(password = passwordEncoder.encode(user.password)))
+        userRepo.save(
+            user.copy(
+                hashedPassword = passwordEncoder.encode(
+                    user.password ?: throw RuntimeException("password missing")
+                )
+            )
+        )
     }
 }

@@ -18,7 +18,7 @@ object HandlerTest {
 
     private val useCase = mockk<UseCase>()
     private val httpClient = newHttpClient()
-    private val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", password = "password")
+    private val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "password")
     private lateinit var server: Javalin
 
     @BeforeAll

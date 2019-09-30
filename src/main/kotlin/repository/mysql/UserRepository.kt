@@ -6,6 +6,7 @@ import domain.UserRepositoryCrud
 import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -15,7 +16,7 @@ class UserRepository(private val database: Database) : UserRepositoryCrud {
     object Users : IntIdTable() {
         val email = varchar("email", 50).uniqueIndex()
         val name = varchar("name", 50)
-        val password = varchar("password", 50)
+        val hashedPassword = varchar("hashedPassword", 50)
     }
 
     override fun findAll(): List<UserEntity> {
@@ -25,7 +26,7 @@ class UserRepository(private val database: Database) : UserRepositoryCrud {
                     id = it[Users.id].value,
                     email = it[Users.email],
                     name = it[Users.name],
-                    password = it[Users.password]
+                    hashedPassword = it[Users.hashedPassword]
                 )
             }
         }
@@ -37,13 +38,19 @@ class UserRepository(private val database: Database) : UserRepositoryCrud {
                 Users.insert {
                     it[email] = user.email
                     it[name] = user.name
-                    it[password] = user.password
+                    it[hashedPassword] = user.hashedPassword ?: throw RuntimeException("password must be hashed first")
                 }
             } catch (ex: ExposedSQLException) {
                 if (ex.message != null && ex.message!!.contains("users_email_unique")) {
                     throw UserAlreadyExists()
                 } else throw ex
             }
+        }
+    }
+
+    fun createSchema() {
+        transaction(database) {
+            SchemaUtils.createMissingTablesAndColumns(Users)
         }
     }
 }
