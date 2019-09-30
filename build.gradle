@@ -47,3 +47,7 @@ dependencies {
 	testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
 	testImplementation 'com.wix:wix-embedded-mysql:4.6.0'
 }
+
+test {
+	useJUnitPlatform()
+}

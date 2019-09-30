@@ -5,7 +5,7 @@ import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.ScriptResolver.classPathScript
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version.v5_7_latest
-import domain.entities.UserInList
+import domain.UserEntity
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,6 +27,7 @@ object ListUsersRepositoryTest {
         dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3300/test_schema", "com.mysql.cj.jdbc.Driver")
 
         Schema(dbClient).create()
+        // TODO: don't use a file insert from here
         dbServer.executeScripts("test_schema", classPathScript("add_users.sql"))
     }
 
@@ -34,10 +35,12 @@ object ListUsersRepositoryTest {
     fun `GIVEN a list of users in the database, WHEN requesting it, THEN it returns it`() {
         val result = UserRepository(dbClient).findAll()
 
-        assertEquals(setOf(
-                UserInList(id = 1, email = "lsoares@gmail.com", name = "Luís Soares"),
-                UserInList(id = 2, email = "ms123@gmail.com", name = "Miguel Soares")
-        ), result.toSet())
+        assertEquals(
+            setOf(
+                UserEntity(id = 1, email = "lsoares@gmail.com", name = "Luís Soares", password = "hashed1"),
+                UserEntity(id = 2, email = "ms123@gmail.com", name = "Miguel Soares", password = "hashed2")
+            ), result.toSet()
+        )
     }
 
     @AfterAll

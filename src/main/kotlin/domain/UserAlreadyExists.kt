@@ -1,3 +1,3 @@
-package createuser
+package domain
 
 class UserAlreadyExists : Exception()

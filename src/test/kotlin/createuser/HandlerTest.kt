@@ -1,6 +1,7 @@
 package createuser
 
-import domain.entities.UserToCreate
+import domain.UserAlreadyExists
+import domain.UserEntity
 import io.javalin.Javalin
 import io.mockk.*
 import org.eclipse.jetty.http.HttpStatus
@@ -17,7 +18,7 @@ object HandlerTest {
 
     private val useCase = mockk<UseCase>()
     private val httpClient = newHttpClient()
-    private val user = UserToCreate(email = "lsoares@gmail.com", name = "Luís Soares", password = "password")
+    private val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", password = "password")
     private lateinit var server: Javalin
 
     @BeforeAll

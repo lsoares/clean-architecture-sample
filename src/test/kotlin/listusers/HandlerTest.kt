@@ -1,6 +1,6 @@
 package listusers
 
-import domain.entities.UserInList
+import domain.UserEntity
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -30,7 +30,7 @@ object HandlerTest {
 
     @Test
     fun `GIVEN a list of users, WHEN requesting it, THEN it converts it to a json representation`() {
-        every { useCase.list() } returns listOf(UserInList(id = 1, email = "email", name = "Luís"))
+        every { useCase.list() } returns listOf(UserEntity(id = 1, email = "email", name = "Luís", password = "hashed"))
 
         val response = newHttpClient().send(
                 newBuilder().GET().uri(URI("http://localhost:1234")).build(), ofString()

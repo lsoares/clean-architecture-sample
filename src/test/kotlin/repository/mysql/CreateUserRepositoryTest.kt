@@ -4,8 +4,8 @@ import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
-import createuser.UserAlreadyExists
-import domain.entities.UserToCreate
+import domain.UserAlreadyExists
+import domain.UserEntity
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.count
 import org.jetbrains.exposed.sql.deleteAll
@@ -38,24 +38,24 @@ object CreateUserRepositoryTest {
 
     @Test
     fun `GIVEN a user, WHEN storing it, THEN it's persisted and gets an id`() {
-        val user = UserToCreate("abc123", "lsoares@gmail.com", "Luís Soares")
+        val user = UserEntity(null, "abc123", "lsoares@gmail.com", "Luís Soares")
 
-        UserRepository(dbClient).create(user)
+        UserRepository(dbClient).save(user)
 
         val row = transaction(dbClient) {
             Users.select { Users.email eq user.email }.first()
         }
-        assertEquals(user, UserToCreate(email = row[Users.email], password = row[Users.password], name = row[Users.name]))
+        assertEquals(user, UserEntity(email = row[Users.email], password = row[Users.password], name = row[Users.name]))
         assertTrue(row[Users.id].value > 0)
     }
 
     @Test
     fun `GIVEN an existing user, WHEN storing it, THEN it's not persisted and an exception is thrown`() {
-        val user = UserToCreate("abc123", "lsoares@gmail.com", "Luís Soares")
+        val user = UserEntity(null, "abc123", "lsoares@gmail.com", "Luís Soares")
 
-        UserRepository(dbClient).create(user)
+        UserRepository(dbClient).save(user)
         assertThrows<UserAlreadyExists> {
-            UserRepository(dbClient).create(user)
+            UserRepository(dbClient).save(user)
         }
 
         transaction(dbClient) {
