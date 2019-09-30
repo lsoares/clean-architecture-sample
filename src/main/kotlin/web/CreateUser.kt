@@ -1,6 +1,5 @@
 package web
 
-import domain.UserAlreadyExists
 import domain.UserEntity
 import features.CreateUser
 import io.javalin.http.Context
@@ -12,7 +11,7 @@ class CreateUser(private val createUser: CreateUser) : io.javalin.http.Handler {
         try {
             createUser.execute(ctx.body<UserRepresenter>().toUser())
             ctx.status(HttpStatus.CREATED_201)
-        } catch (ex: UserAlreadyExists) {
+        } catch (ex: UserEntity.UserAlreadyExists) {
             ctx.status(HttpStatus.CONFLICT_409)
         }
     }

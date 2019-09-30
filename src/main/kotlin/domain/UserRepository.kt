@@ -1,6 +1,6 @@
 package domain
 
-interface UserRepositoryCrud {
+interface UserRepository {
     fun findAll(): List<UserEntity>
     fun save(user: UserEntity)
 }

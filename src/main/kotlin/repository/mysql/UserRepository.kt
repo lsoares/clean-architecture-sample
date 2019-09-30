@@ -1,8 +1,7 @@
 package repository.mysql
 
-import domain.UserAlreadyExists
 import domain.UserEntity
-import domain.UserRepositoryCrud
+import domain.UserRepository
 import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
@@ -11,7 +10,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class UserRepository(private val database: Database) : UserRepositoryCrud {
+class UserRepository(private val database: Database) : UserRepository {
 
     object Users : IntIdTable() {
         val email = varchar("email", 50).uniqueIndex()
@@ -42,7 +41,7 @@ class UserRepository(private val database: Database) : UserRepositoryCrud {
                 }
             } catch (ex: ExposedSQLException) {
                 if (ex.message != null && ex.message!!.contains("users_email_unique")) {
-                    throw UserAlreadyExists()
+                    throw UserEntity.UserAlreadyExists()
                 } else throw ex
             }
         }

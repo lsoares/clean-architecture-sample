@@ -15,4 +15,3 @@ class ListUsers(private val listUsers: ListUsers) : io.javalin.http.Handler {
 
     private class UserRepresenter(val id: Int?, val email: String, val name: String)
 }
-

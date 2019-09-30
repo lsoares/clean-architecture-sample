@@ -1,7 +1,7 @@
 package features
 
-import domain.UserRepositoryCrud
+import domain.UserRepository
 
-class ListUsers(private val userRepo: UserRepositoryCrud) {
+class ListUsers(private val userRepo: UserRepository) {
     fun execute() = userRepo.findAll()
 }

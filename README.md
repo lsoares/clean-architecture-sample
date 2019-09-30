@@ -10,7 +10,6 @@ I created this repo for multiple reasons:
     - Clean architecture
     - Separation of config from app
     - Dealing with exceptions
-    - Package by feature
 - Testing
     - TDD
     - Given, When, Then

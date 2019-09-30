@@ -1,29 +1,11 @@
 package features
 
-import domain.InvalidUser
 import domain.UserEntity
-import domain.UserRepositoryCrud
-import javax.validation.Validation
+import domain.UserRepository
 
-class CreateUser(private val userRepo: UserRepositoryCrud, private val passwordEncoder: PasswordEncoder) {
-
-    private val validator = Validation.buildDefaultValidatorFactory().validator
+class CreateUser(private val userRepo: UserRepository) {
 
     fun execute(user: UserEntity) {
-        validator.validate(user).apply {
-            if (isNotEmpty()) throw InvalidUser(this)
-        }
-
-        userRepo.save(
-            user.copy(
-                hashedPassword = passwordEncoder.encode(
-                    user.password ?: throw RuntimeException("password missing")
-                )
-            )
-        )
+        userRepo.save(user)
     }
-}
-
-class PasswordEncoder {
-    fun encode(toEncode: String) = toEncode.hashCode().toString() // really bad encoding for the sake of example
 }

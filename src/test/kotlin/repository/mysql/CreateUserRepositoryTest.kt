@@ -4,7 +4,6 @@ import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
-import domain.UserAlreadyExists
 import domain.UserEntity
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.count
@@ -57,7 +56,7 @@ object CreateUserRepositoryTest {
         val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed")
 
         UserRepository(dbClient).save(user)
-        assertThrows<UserAlreadyExists> {
+        assertThrows<UserEntity.UserAlreadyExists> {
             UserRepository(dbClient).save(user)
         }
 

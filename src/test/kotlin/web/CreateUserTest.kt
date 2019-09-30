@@ -1,6 +1,5 @@
 package web
 
-import domain.UserAlreadyExists
 import domain.UserEntity
 import features.CreateUser
 import io.javalin.Javalin
@@ -43,7 +42,7 @@ object CreateUserTest {
 
     @Test
     fun `GIVEN an existing user json, WHEN posting it, THEN it handles the use case exception with 409`() {
-        every { useCase.execute(user) } throws UserAlreadyExists()
+        every { useCase.execute(user) } throws UserEntity.UserAlreadyExists()
         val request = newBuilder()
                 .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
                 .uri(URI("http://localhost:1234")).build()

@@ -1,8 +1,7 @@
 package web
 
-import features.PasswordEncoder
 import io.javalin.Javalin
-import io.javalin.apibuilder.ApiBuilder
+import io.javalin.apibuilder.ApiBuilder.*
 import org.jetbrains.exposed.sql.Database
 import repository.mysql.UserRepository
 
@@ -23,10 +22,10 @@ class WebAppConfig(dbUrl: String, private val port: Int) {
         userRepo.createSchema()
 
         javalinApp = Javalin.create().routes {
-            ApiBuilder.get { it.result("check health") }
-            ApiBuilder.path("users") {
-                ApiBuilder.get(ListUsers(features.ListUsers(userRepo)))
-                ApiBuilder.post(CreateUser(features.CreateUser(userRepo, PasswordEncoder())))
+            get { it.result("check health") }
+            path("users") {
+                get(ListUsers(features.ListUsers(userRepo)))
+                post(CreateUser(features.CreateUser(userRepo)))
             }
         }
     }
