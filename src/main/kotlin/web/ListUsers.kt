@@ -1,12 +1,13 @@
-package listusers
+package web
 
 import domain.UserEntity
+import features.ListUsers
 import io.javalin.http.Context
 
-class Handler(private val useCase: UseCase) : io.javalin.http.Handler {
+class ListUsers(private val listUsers: ListUsers) : io.javalin.http.Handler {
 
     override fun handle(ctx: Context) {
-        ctx.json(useCase.list().toRepresenter())
+        ctx.json(listUsers.execute().toRepresenter())
     }
 
     private fun List<UserEntity>.toRepresenter() =

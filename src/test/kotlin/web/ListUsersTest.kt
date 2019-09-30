@@ -1,6 +1,7 @@
-package listusers
+package web
 
 import domain.UserEntity
+import features.ListUsers
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -16,21 +17,21 @@ import java.net.http.HttpRequest.newBuilder
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
 @DisplayName("List users handler")
-object HandlerTest {
+object ListUsersTest {
 
     private lateinit var server: Javalin
-    private lateinit var useCase: UseCase
+    private lateinit var listUsers: ListUsers
 
     @BeforeAll
     @JvmStatic
     fun setup() {
-        useCase = mockk()
-        server = Javalin.create().get("/", Handler(useCase)).start(1234)
+        listUsers = mockk()
+        server = Javalin.create().get("/", ListUsers(listUsers)).start(1234)
     }
 
     @Test
     fun `GIVEN a list of users, WHEN requesting it, THEN it converts it to a json representation`() {
-        every { useCase.list() } returns listOf(
+        every { listUsers.execute() } returns listOf(
             UserEntity(
                 id = 1,
                 email = "email",
@@ -43,7 +44,7 @@ object HandlerTest {
                 newBuilder().GET().uri(URI("http://localhost:1234")).build(), ofString()
         )
 
-        verify(exactly = 1) { useCase.list() }
+        verify(exactly = 1) { listUsers.execute() }
         assertEquals(HttpStatus.OK_200, response.statusCode())
         JSONAssert.assertEquals(""" [ { "id": 1, "name": "Luís", "email": "email" } ] """, response.body(), true)
     }

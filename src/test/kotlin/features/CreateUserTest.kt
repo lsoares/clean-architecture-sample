@@ -1,5 +1,6 @@
-package createuser
+package features
 
+import domain.InvalidUser
 import domain.UserEntity
 import domain.UserRepositoryCrud
 import io.mockk.*
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 @DisplayName("Create user use case")
-object UseCaseTest {
+object CreateUserTest {
 
     @Test
     fun `GIVEN a valid user, WHEN running the use case, THEN it calls the repo`() {
@@ -20,7 +21,7 @@ object UseCaseTest {
             every { encode("toEncode") } returns "encoded"
         }
 
-        UseCase(repository, passwordEncoder).createUser(user)
+        CreateUser(repository, passwordEncoder).execute(user)
 
         verify(exactly = 1) { passwordEncoder.encode("toEncode") }
         verify(exactly = 1) { repository.save(user.copy(hashedPassword = "encoded")) }
@@ -30,9 +31,9 @@ object UseCaseTest {
     fun `GIVEN an invalid user, WHEN running the use case, THEN it throws exception and does not call the repo`() {
         val repository = mockk<UserRepositoryCrud>()
 
-        assertThrows<InvalidUserException> {
-            UseCase(repository, PasswordEncoder())
-                .createUser(UserEntity(email = "lsoares", name = "L", hashedPassword = "1"))
+        assertThrows<InvalidUser> {
+            CreateUser(repository, PasswordEncoder())
+                .execute(UserEntity(email = "lsoares", name = "L", hashedPassword = "1"))
         }
 
         verify { repository wasNot Called }

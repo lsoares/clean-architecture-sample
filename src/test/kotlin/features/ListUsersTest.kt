@@ -1,4 +1,4 @@
-package listusers
+package features
 
 import domain.UserEntity
 import domain.UserRepositoryCrud
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @DisplayName("List users use case")
-object UseCaseTest {
+object ListUsersTest {
 
     @Test
     fun `GIVEN a list of users, WHEN requesting it, THEN it returns it`() {
@@ -18,7 +18,7 @@ object UseCaseTest {
             every { findAll() } returns listOf(UserEntity(1, "email", "Luís Soares", "hashed"))
         }
 
-        val users = UseCase(repository).list()
+        val users = ListUsers(repository).execute()
 
         verify(exactly = 1) { repository.findAll() }
         assertEquals(listOf(UserEntity(1, "email", "Luís Soares", "hashed")), users)
