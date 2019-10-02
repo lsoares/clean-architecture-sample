@@ -4,10 +4,7 @@ import domain.UserEntity
 import domain.UserRepository
 import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.exceptions.ExposedSQLException
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserRepository(private val database: Database) : UserRepository {
@@ -18,16 +15,14 @@ class UserRepository(private val database: Database) : UserRepository {
         val hashedPassword = varchar("hashedPassword", 50)
     }
 
-    override fun findAll(): List<UserEntity> {
-        return transaction(database) {
-            Users.selectAll().map {
-                UserEntity(
-                    id = it[Users.id].value,
-                    email = it[Users.email],
-                    name = it[Users.name],
-                    hashedPassword = it[Users.hashedPassword]
-                )
-            }
+    override fun findAll() = transaction(database) {
+        Users.selectAll().map {
+            UserEntity(
+                id = it[Users.id].value,
+                email = it[Users.email],
+                name = it[Users.name],
+                hashedPassword = it[Users.hashedPassword]
+            )
         }
     }
 
@@ -45,6 +40,10 @@ class UserRepository(private val database: Database) : UserRepository {
                 } else throw ex
             }
         }
+    }
+
+    override fun deleteAll() {
+        transaction(database) { Users.deleteAll() }
     }
 
     fun createSchema() {
