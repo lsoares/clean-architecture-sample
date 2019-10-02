@@ -6,8 +6,6 @@ import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
 import org.eclipse.jetty.http.HttpStatus
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.deleteAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
@@ -26,7 +24,7 @@ object IntegrationTest {
 
     private lateinit var webAppConfig: WebAppConfig
     private lateinit var dbServer: EmbeddedMysql
-    private lateinit var dbClient: Database
+    private lateinit var userRepository: UserRepository
     private val httpClient = newHttpClient()
 
     @BeforeAll
@@ -35,16 +33,16 @@ object IntegrationTest {
         val config = aMysqldConfig(Version.v5_7_latest).withPort(3301).withUser("user", "pass").build()
         dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
         val dbUrl = "jdbc:mysql://user:pass@localhost:3301/test_schema"
-        dbClient = Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver")
-        UserRepository(dbClient).createSchema()
+        userRepository = UserRepository(Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver"))
 
+        userRepository.createSchema()
         webAppConfig = WebAppConfig(dbUrl = dbUrl, port = 8081)
         webAppConfig.start()
     }
 
     @BeforeEach
     fun beforeEach() {
-        transaction(dbClient) { UserRepository.Users.deleteAll() }
+        userRepository.deleteAll()
     }
 
     @Test

@@ -21,6 +21,7 @@ data class UserEntity(
                 if (isNotEmpty()) throw InvalidUser(this)
             }
         }
+        // TODO: generate random id
     }
 
     class InvalidUser(private val violations: MutableSet<ConstraintViolation<UserEntity>>) : Exception()
