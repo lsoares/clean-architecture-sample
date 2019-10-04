@@ -18,7 +18,6 @@ object CreateUserTest {
 
     private val useCase = mockk<CreateUser>()
     private val httpClient = newHttpClient()
-    private val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", password = "password")
     private lateinit var server: Javalin
 
     @BeforeAll
@@ -28,28 +27,28 @@ object CreateUserTest {
     }
 
     @Test
-    fun `GIVEN a user json, WHEN posting it, THEN it creates it replies 201`() {
-        every { useCase.execute(user) } just Runs
+    fun `GIVEN a user json, WHEN posting it, THEN it creates it and replies 201`() {
+        every { useCase.execute(any()) } just Runs
         val request = newBuilder()
-                .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
-                .uri(URI("http://localhost:1234")).build()
+            .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
+            .uri(URI("http://localhost:1234")).build()
 
         val response = httpClient.send(request, ofString())
 
-        verify(exactly = 1) { useCase.execute(user) }
+        verify(exactly = 1) { useCase.execute(any()) } // TODO verify argument
         assertEquals(HttpStatus.CREATED_201, response.statusCode())
     }
 
     @Test
     fun `GIVEN an existing user json, WHEN posting it, THEN it handles the use case exception with 409`() {
-        every { useCase.execute(user) } throws UserEntity.UserAlreadyExists()
+        every { useCase.execute(any()) } throws UserEntity.UserAlreadyExists()
         val request = newBuilder()
-                .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
-                .uri(URI("http://localhost:1234")).build()
+            .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
+            .uri(URI("http://localhost:1234")).build()
 
         val response = httpClient.send(request, ofString())
 
-        verify(exactly = 1) { useCase.execute(user) }
+        verify(exactly = 1) { useCase.execute(any()) } // TODO verify argument
         assertEquals(HttpStatus.CONFLICT_409, response.statusCode())
     }
 

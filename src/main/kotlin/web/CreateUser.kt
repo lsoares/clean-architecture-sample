@@ -17,6 +17,6 @@ class CreateUser(private val createUser: CreateUser) : io.javalin.http.Handler {
     }
 
     private class UserRepresenter(val email: String, val name: String, val password: String) {
-        fun toUser() = UserEntity(id = null, email = email, name = name, password = password)
+        fun toUser() = UserEntity(email = email, name = name, password = password)
     }
 }

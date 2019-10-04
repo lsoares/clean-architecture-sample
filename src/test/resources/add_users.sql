@@ -1,2 +1,2 @@
-INSERT INTO Users (name, email, hashedPassword) VALUES ('Luís Soares', 'lsoares@gmail.com', 'hashed1');
-INSERT INTO Users (name, email, hashedPassword) VALUES ('Miguel Soares', 'ms123@gmail.com', 'hashed2');
+INSERT INTO Users (id, name, email, hashedPassword) VALUES ('a1', 'Luís Soares', 'lsoares@gmail.com', 'hashed1');
+INSERT INTO Users (id, name, email, hashedPassword) VALUES ('a2', 'Miguel Soares', 'ms123@gmail.com', 'hashed2');

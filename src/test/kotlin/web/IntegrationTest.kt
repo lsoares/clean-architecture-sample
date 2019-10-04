@@ -4,6 +4,10 @@ import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
+import domain.IdGenerator
+import io.mockk.every
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import org.eclipse.jetty.http.HttpStatus
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
@@ -47,6 +51,8 @@ object IntegrationTest {
 
     @Test
     fun `GIVEN a user's json, WHEN posting it, THEN it creates a user`() {
+        mockkObject(IdGenerator)
+        every { IdGenerator.generate() } returns "1" andThen "2"
         httpClient.send(
             newBuilder()
                 .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
@@ -58,14 +64,15 @@ object IntegrationTest {
                 .uri(URI("http://localhost:8081/users")).build(), discarding()
         )
 
-        val response = httpClient.send(newBuilder().GET().uri(URI("http://localhost:8081/users")).build(), ofString())
+        val userList = httpClient.send(newBuilder().GET().uri(URI("http://localhost:8081/users")).build(), ofString())
 
         JSONAssert.assertEquals(
-            """ [ { "id": 1, "name": "Luís Soares", "email": "lsoares@gmail.com" },
-                            { "id": 2, "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
-            response.body(),
+            """ [ { "id": "1", "name": "Luís Soares", "email": "lsoares@gmail.com" },
+                            { "id": "2", "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
+            userList.body(),
             true
         )
+        unmockkObject(IdGenerator)
     }
 
     @Test
