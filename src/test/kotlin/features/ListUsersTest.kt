@@ -17,7 +17,7 @@ object ListUsersTest {
         val repository = mockk<UserRepository> {
             every { findAll() } returns listOf(
                 UserEntity(
-                    id = 1,
+                    id = "abc1",
                     email = "email",
                     name = "Luís Soares",
                     hashedPassword = "hashed"
@@ -29,7 +29,7 @@ object ListUsersTest {
 
         verify(exactly = 1) { repository.findAll() }
         assertEquals(
-            listOf(UserEntity(id = 1, email = "email", name = "Luís Soares", hashedPassword = "hashed")),
+            listOf(UserEntity(id = "abc1", email = "email", name = "Luís Soares", hashedPassword = "hashed")),
             users
         )
     }

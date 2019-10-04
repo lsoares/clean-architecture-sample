@@ -11,8 +11,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import repository.mysql.UserRepository.Users
+import repository.mysql.UserRepository.UserSchema
 
 @DisplayName("Create user repository")
 object CreateUserRepositoryTest {
@@ -24,9 +23,9 @@ object CreateUserRepositoryTest {
     @BeforeAll
     @JvmStatic
     fun beforeAll() {
-        val config = aMysqldConfig(Version.v5_7_latest).withPort(3302).withUser("user", "pass").build()
+        val config = aMysqldConfig(Version.v5_7_latest).withPort(3310).withUser("user", "pass").build()
         dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
-        dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3302/test_schema", "com.mysql.cj.jdbc.Driver")
+        dbClient = Database.connect("jdbc:mysql://user:pass@localhost:3310/test_schema", "com.mysql.cj.jdbc.Driver")
         userRepository = UserRepository(dbClient)
         userRepository.createSchema()
     }
@@ -37,33 +36,37 @@ object CreateUserRepositoryTest {
     }
 
     @Test
-    fun `GIVEN a user, WHEN storing it, THEN it's persisted and gets an id`() {
-        val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed")
+    fun `GIVEN a user, WHEN storing it, THEN it's persisted`() {
+        val user = UserEntity(id = "123", email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed")
 
         userRepository.save(user)
 
         val row = transaction(dbClient) {
-            Users.select { Users.email eq user.email }.first()
+            UserSchema.select { UserSchema.email eq user.email }.first()
         }
         assertEquals(
             user,
-            UserEntity(email = row[Users.email], hashedPassword = row[Users.hashedPassword], name = row[Users.name])
+            UserEntity(
+                id = row[UserSchema.id],
+                email = row[UserSchema.email],
+                hashedPassword = row[UserSchema.hashedPassword],
+                name = row[UserSchema.name]
+            )
         )
-        assertTrue(row[Users.id].value > 0)
     }
 
     @Test
-    fun `GIVEN an existing user, WHEN storing it, THEN it's not persisted and an exception is thrown`() {
+    fun `GIVEN an repeated user, WHEN storing it, THEN it's not persisted and an exception is thrown`() {
         val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed")
 
         userRepository.save(user)
         assertThrows<UserEntity.UserAlreadyExists> {
-            UserRepository(dbClient).save(user)
+            UserRepository(dbClient).save(user.copy(id = null))
         }
 
         transaction(dbClient) {
-            Users.slice(Users.email.count()).select { Users.email eq user.email }.first().run {
-                assertEquals(1, this[Users.email.count()])
+            UserSchema.slice(UserSchema.email.count()).select { UserSchema.email eq user.email }.first().run {
+                assertEquals(1, this[UserSchema.email.count()])
             }
         }
     }

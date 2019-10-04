@@ -18,8 +18,7 @@ class WebAppConfig(dbUrl: String, private val port: Int) {
 
     init {
         val database = Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver")
-        val userRepo = UserRepository(database)
-        userRepo.createSchema()
+        val userRepo = UserRepository(database).apply { createSchema() }
 
         javalinApp = Javalin.create().routes {
             get { it.result("check health") }

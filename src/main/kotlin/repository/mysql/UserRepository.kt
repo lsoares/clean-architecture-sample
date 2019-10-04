@@ -2,26 +2,26 @@ package repository.mysql
 
 import domain.UserEntity
 import domain.UserRepository
-import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserRepository(private val database: Database) : UserRepository {
 
-    object Users : IntIdTable() {
+    object UserSchema : Table("users") {
+        val id = varchar("id", 36).primaryKey()
         val email = varchar("email", 50).uniqueIndex()
         val name = varchar("name", 50)
         val hashedPassword = varchar("hashedPassword", 50)
     }
 
     override fun findAll() = transaction(database) {
-        Users.selectAll().map {
+        UserSchema.selectAll().map {
             UserEntity(
-                id = it[Users.id].value,
-                email = it[Users.email],
-                name = it[Users.name],
-                hashedPassword = it[Users.hashedPassword]
+                id = it[UserSchema.id],
+                email = it[UserSchema.email],
+                name = it[UserSchema.name],
+                hashedPassword = it[UserSchema.hashedPassword]
             )
         }
     }
@@ -29,7 +29,8 @@ class UserRepository(private val database: Database) : UserRepository {
     override fun save(user: UserEntity) {
         transaction(database) {
             try {
-                Users.insert {
+                UserSchema.insert {
+                    it[id] = user.id!!
                     it[email] = user.email
                     it[name] = user.name
                     it[hashedPassword] = user.hashedPassword ?: throw RuntimeException("password must be hashed first")
@@ -43,12 +44,12 @@ class UserRepository(private val database: Database) : UserRepository {
     }
 
     override fun deleteAll() {
-        transaction(database) { Users.deleteAll() }
+        transaction(database) { UserSchema.deleteAll() }
     }
 
     fun createSchema() {
         transaction(database) {
-            SchemaUtils.createMissingTablesAndColumns(Users)
+            SchemaUtils.createMissingTablesAndColumns(UserSchema)
         }
     }
 }

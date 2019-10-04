@@ -13,5 +13,5 @@ class ListUsers(private val listUsers: ListUsers) : io.javalin.http.Handler {
     private fun List<UserEntity>.toRepresenter() =
             map { UserRepresenter(it.id, it.email, it.name) }
 
-    private class UserRepresenter(val id: Int?, val email: String, val name: String)
+    private class UserRepresenter(val id: String?, val email: String, val name: String)
 }

@@ -33,7 +33,7 @@ object ListUsersTest {
     fun `GIVEN a list of users, WHEN requesting it, THEN it converts it to a json representation`() {
         every { listUsers.execute() } returns listOf(
             UserEntity(
-                id = 1,
+                id = "xyz",
                 email = "email",
                 name = "Luís",
                 hashedPassword = "hashed"
@@ -46,7 +46,7 @@ object ListUsersTest {
 
         verify(exactly = 1) { listUsers.execute() }
         assertEquals(HttpStatus.OK_200, response.statusCode())
-        JSONAssert.assertEquals(""" [ { "id": 1, "name": "Luís", "email": "email" } ] """, response.body(), true)
+        JSONAssert.assertEquals(""" [ { "id": "xyz", "name": "Luís", "email": "email" } ] """, response.body(), true)
     }
 
     @AfterEach

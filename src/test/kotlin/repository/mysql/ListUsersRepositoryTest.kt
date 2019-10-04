@@ -37,8 +37,8 @@ object ListUsersRepositoryTest {
 
         assertEquals(
             setOf(
-                UserEntity(id = 1, email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed1"),
-                UserEntity(id = 2, email = "ms123@gmail.com", name = "Miguel Soares", hashedPassword = "hashed2")
+                UserEntity(id = "a1", email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed1"),
+                UserEntity(id = "a2", email = "ms123@gmail.com", name = "Miguel Soares", hashedPassword = "hashed2")
             ), result.toSet()
         )
     }
