@@ -1,5 +1,6 @@
 package web
 
+import domain.EmailAddress
 import domain.UserEntity
 import features.ListUsers
 import io.javalin.Javalin
@@ -34,19 +35,23 @@ object ListUsersTest {
         every { listUsers.execute() } returns listOf(
             UserEntity(
                 id = "xyz",
-                email = "email",
+                email = EmailAddress("email@test.com"),
                 name = "Luís",
                 hashedPassword = "hashed"
             )
         )
 
         val response = newHttpClient().send(
-                newBuilder().GET().uri(URI("http://localhost:1234")).build(), ofString()
+            newBuilder().GET().uri(URI("http://localhost:1234")).build(), ofString()
         )
 
         verify(exactly = 1) { listUsers.execute() }
         assertEquals(HttpStatus.OK_200, response.statusCode())
-        JSONAssert.assertEquals(""" [ { "id": "xyz", "name": "Luís", "email": "email" } ] """, response.body(), true)
+        JSONAssert.assertEquals(
+            """ [ { "id": "xyz", "name": "Luís", "email": "email@test.com" } ] """,
+            response.body(),
+            true
+        )
     }
 
     @AfterEach

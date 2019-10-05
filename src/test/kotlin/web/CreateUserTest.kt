@@ -1,5 +1,6 @@
 package web
 
+import domain.EmailAddress
 import domain.UserEntity
 import features.CreateUser
 import io.javalin.Javalin
@@ -28,14 +29,24 @@ object CreateUserTest {
 
     @Test
     fun `GIVEN a user json, WHEN posting it, THEN it creates it and replies 201`() {
-        every { useCase.execute(any()) } just Runs
+        val userCapture = slot<UserEntity>()
+        every { useCase.execute(capture(userCapture)) } just Runs
         val request = newBuilder()
-            .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
+            .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís", "password": "password"} """))
             .uri(URI("http://localhost:1234")).build()
 
         val response = httpClient.send(request, ofString())
 
-        verify(exactly = 1) { useCase.execute(any()) } // TODO verify argument
+        verify(exactly = 1) {
+            useCase.execute(
+                UserEntity(
+                    userCapture.captured.id,
+                    email = EmailAddress("lsoares@gmail.com"),
+                    name = "Luís",
+                    password = "password"
+                )
+            )
+        }
         assertEquals(HttpStatus.CREATED_201, response.statusCode())
     }
 
@@ -43,12 +54,12 @@ object CreateUserTest {
     fun `GIVEN an existing user json, WHEN posting it, THEN it handles the use case exception with 409`() {
         every { useCase.execute(any()) } throws UserEntity.UserAlreadyExists()
         val request = newBuilder()
-            .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
+            .POST(ofString("""{ "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"}"""))
             .uri(URI("http://localhost:1234")).build()
 
         val response = httpClient.send(request, ofString())
 
-        verify(exactly = 1) { useCase.execute(any()) } // TODO verify argument
+        verify(exactly = 1) { useCase.execute(any()) }
         assertEquals(HttpStatus.CONFLICT_409, response.statusCode())
     }
 

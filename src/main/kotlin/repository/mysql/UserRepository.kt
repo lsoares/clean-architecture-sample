@@ -1,5 +1,6 @@
 package repository.mysql
 
+import domain.EmailAddress
 import domain.UserEntity
 import domain.UserRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -19,7 +20,7 @@ class UserRepository(private val database: Database) : UserRepository {
         UserSchema.selectAll().map {
             UserEntity(
                 id = it[UserSchema.id],
-                email = it[UserSchema.email],
+                email = EmailAddress(it[UserSchema.email]),
                 name = it[UserSchema.name],
                 hashedPassword = it[UserSchema.hashedPassword]
             )
@@ -31,7 +32,7 @@ class UserRepository(private val database: Database) : UserRepository {
             try {
                 UserSchema.insert {
                     it[id] = user.id!!
-                    it[email] = user.email
+                    it[email] = user.email.value
                     it[name] = user.name
                     it[hashedPassword] = user.hashedPassword ?: throw RuntimeException("password must be hashed first")
                 }

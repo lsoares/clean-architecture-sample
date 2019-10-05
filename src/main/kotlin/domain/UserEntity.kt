@@ -3,13 +3,12 @@ package domain
 import java.util.*
 import javax.validation.ConstraintViolation
 import javax.validation.Validation
-import javax.validation.constraints.Email
 import javax.validation.constraints.Size
 
 // TODO create tests for entity
 data class UserEntity(
     var id: String? = null, // TODO validate id
-    @field:Email val email: String, // TODO create entity
+    val email: EmailAddress,
     @field:Size(min = 2) val name: String,
     @field:Size(min = 5) val password: String? = null,
     var hashedPassword: String? = null

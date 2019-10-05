@@ -4,6 +4,7 @@ import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
+import domain.EmailAddress
 import domain.UserEntity
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.count
@@ -37,18 +38,23 @@ object CreateUserRepositoryTest {
 
     @Test
     fun `GIVEN a user, WHEN storing it, THEN it's persisted`() {
-        val user = UserEntity(id = "123", email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed")
+        val user = UserEntity(
+            id = "123",
+            email = EmailAddress("lsoares@gmail.com"),
+            name = "Luís Soares",
+            hashedPassword = "hashed"
+        )
 
         userRepository.save(user)
 
         val row = transaction(dbClient) {
-            UserSchema.select { UserSchema.email eq user.email }.first()
+            UserSchema.select { UserSchema.email eq user.email.value }.first()
         }
         assertEquals(
             user,
             UserEntity(
                 id = row[UserSchema.id],
-                email = row[UserSchema.email],
+                email = EmailAddress(row[UserSchema.email]),
                 hashedPassword = row[UserSchema.hashedPassword],
                 name = row[UserSchema.name]
             )
@@ -57,7 +63,10 @@ object CreateUserRepositoryTest {
 
     @Test
     fun `GIVEN an repeated user, WHEN storing it, THEN it's not persisted and an exception is thrown`() {
-        val user = UserEntity(email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed")
+        val user = UserEntity(
+            email = EmailAddress("lsoares@gmail.com"),
+            name = "Luís Soares", hashedPassword = "hashed"
+        )
 
         userRepository.save(user)
         assertThrows<UserEntity.UserAlreadyExists> {
@@ -65,7 +74,7 @@ object CreateUserRepositoryTest {
         }
 
         transaction(dbClient) {
-            UserSchema.slice(UserSchema.email.count()).select { UserSchema.email eq user.email }.first().run {
+            UserSchema.slice(UserSchema.email.count()).select { UserSchema.email eq user.email.value }.first().run {
                 assertEquals(1, this[UserSchema.email.count()])
             }
         }

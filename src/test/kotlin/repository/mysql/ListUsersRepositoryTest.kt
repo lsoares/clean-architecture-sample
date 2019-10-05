@@ -5,6 +5,7 @@ import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.ScriptResolver.classPathScript
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version.v5_7_latest
+import domain.EmailAddress
 import domain.UserEntity
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
@@ -37,8 +38,18 @@ object ListUsersRepositoryTest {
 
         assertEquals(
             setOf(
-                UserEntity(id = "a1", email = "lsoares@gmail.com", name = "Luís Soares", hashedPassword = "hashed1"),
-                UserEntity(id = "a2", email = "ms123@gmail.com", name = "Miguel Soares", hashedPassword = "hashed2")
+                UserEntity(
+                    id = "a1",
+                    email = EmailAddress("lsoares@gmail.com"),
+                    name = "Luís Soares",
+                    hashedPassword = "hashed1"
+                ),
+                UserEntity(
+                    id = "a2",
+                    email = EmailAddress("ms123@gmail.com"),
+                    name = "Miguel Soares",
+                    hashedPassword = "hashed2"
+                )
             ), result.toSet()
         )
     }
