@@ -1,13 +1,13 @@
-package repository.mysql
+package persistence
 
 import domain.EmailAddress
-import domain.UserEntity
+import domain.User
 import domain.UserRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class UserRepository(private val database: Database) : UserRepository {
+class MySqlUserRepository(private val database: Database) : UserRepository {
 
     object UserSchema : Table("users") {
         val id = varchar("id", 36).primaryKey()
@@ -18,7 +18,7 @@ class UserRepository(private val database: Database) : UserRepository {
 
     override fun findAll() = transaction(database) {
         UserSchema.selectAll().map {
-            UserEntity(
+            User(
                 id = it[UserSchema.id],
                 email = EmailAddress(it[UserSchema.email]),
                 name = it[UserSchema.name],
@@ -27,18 +27,18 @@ class UserRepository(private val database: Database) : UserRepository {
         }
     }
 
-    override fun save(user: UserEntity) {
+    override fun save(user: User) {
         transaction(database) {
             try {
                 UserSchema.insert {
-                    it[id] = user.id!!
+                    it[id] = user.id ?: throw RuntimeException("missing id.")
                     it[email] = user.email.value
                     it[name] = user.name
                     it[hashedPassword] = user.hashedPassword ?: throw RuntimeException("password must be hashed first")
                 }
             } catch (ex: ExposedSQLException) {
                 if (ex.message != null && ex.message!!.contains("users_email_unique")) {
-                    throw UserEntity.UserAlreadyExists()
+                    throw User.UserAlreadyExists()
                 } else throw ex
             }
         }

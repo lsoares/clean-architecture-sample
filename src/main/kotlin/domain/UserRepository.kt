@@ -1,7 +1,7 @@
 package domain
 
 interface UserRepository {
-    fun findAll(): List<UserEntity>
-    fun save(user: UserEntity)
+    fun findAll(): List<User>
+    fun save(user: User)
     fun deleteAll()
 }

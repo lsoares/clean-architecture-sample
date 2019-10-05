@@ -1,6 +1,6 @@
 package web
 
-import domain.UserEntity
+import domain.User
 import features.ListUsers
 import io.javalin.http.Context
 
@@ -10,7 +10,7 @@ class ListUsers(private val listUsers: ListUsers) : io.javalin.http.Handler {
         ctx.json(listUsers.execute().toRepresenter())
     }
 
-    private fun List<UserEntity>.toRepresenter() =
+    private fun List<User>.toRepresenter() =
         map { UserRepresenter(it.id, it.email.value, it.name) }
 
     private class UserRepresenter(val id: String?, val email: String, val name: String)

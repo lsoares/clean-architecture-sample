@@ -1,7 +1,7 @@
 package web
 
 import domain.EmailAddress
-import domain.UserEntity
+import domain.User
 import features.ListUsers
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
@@ -33,7 +33,7 @@ object ListUsersTest {
     @Test
     fun `GIVEN a list of users, WHEN requesting it, THEN it converts it to a json representation`() {
         every { listUsers.execute() } returns listOf(
-            UserEntity(
+            User(
                 id = "xyz",
                 email = EmailAddress("email@test.com"),
                 name = "Luís",

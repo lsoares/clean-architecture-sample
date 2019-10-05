@@ -1,7 +1,7 @@
 package features
 
 import domain.EmailAddress
-import domain.UserEntity
+import domain.User
 import domain.UserRepository
 import io.mockk.*
 import org.junit.jupiter.api.DisplayName
@@ -12,7 +12,7 @@ object CreateUserTest {
 
     @Test
     fun `GIVEN a valid user, WHEN running the use case, THEN it calls the repo`() {
-        val user = UserEntity(email = EmailAddress("lsoares@gmail.com"), name = "Luís Soares", password = "toEncode")
+        val user = User(email = EmailAddress("lsoares@gmail.com"), name = "Luís Soares", password = "toEncode")
         val repository = mockk<UserRepository> {
             every { save(user.copy(hashedPassword = "encoded")) } just Runs
         }

@@ -6,7 +6,7 @@ import javax.validation.Validation
 import javax.validation.constraints.Size
 
 // TODO create tests for entity
-data class UserEntity(
+data class User(
     var id: String? = null, // TODO validate id
     val email: EmailAddress,
     @field:Size(min = 2) val name: String,
@@ -27,7 +27,7 @@ data class UserEntity(
         }
     }
 
-    class InvalidUser(private val violations: MutableSet<ConstraintViolation<UserEntity>>) : Exception()
+    class InvalidUser(private val violations: MutableSet<ConstraintViolation<User>>) : Exception()
     class UserAlreadyExists : Exception()
 }
 
