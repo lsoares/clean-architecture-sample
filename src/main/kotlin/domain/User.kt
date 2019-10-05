@@ -5,9 +5,8 @@ import javax.validation.ConstraintViolation
 import javax.validation.Validation
 import javax.validation.constraints.Size
 
-// TODO create tests for entity
 data class User(
-    var id: String? = null, // TODO validate id
+    var id: String? = null,
     val email: EmailAddress,
     @field:Size(min = 2) val name: String,
     @field:Size(min = 5) val password: String? = null,
