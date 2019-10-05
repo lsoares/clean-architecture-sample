@@ -3,7 +3,7 @@ package web
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
 import org.jetbrains.exposed.sql.Database
-import repository.mysql.UserRepository
+import persistence.MySqlUserRepository
 
 fun main() {
     WebAppConfig(
@@ -18,7 +18,7 @@ class WebAppConfig(dbUrl: String, private val port: Int) {
 
     init {
         val database = Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver")
-        val userRepo = UserRepository(database).apply { createSchema() }
+        val userRepo = MySqlUserRepository(database).apply { createSchema() }
 
         javalinApp = Javalin.create().routes {
             get { it.result("check health") }

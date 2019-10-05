@@ -1,11 +1,11 @@
 package features
 
-import domain.UserEntity
+import domain.User
 import domain.UserRepository
 
 class CreateUser(private val userRepo: UserRepository) {
 
-    fun execute(user: UserEntity) {
+    fun execute(user: User) {
         userRepo.save(user)
     }
 }

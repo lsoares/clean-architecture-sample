@@ -1,7 +1,7 @@
 package features
 
 import domain.EmailAddress
-import domain.UserEntity
+import domain.User
 import domain.UserRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -17,7 +17,7 @@ object ListUsersTest {
     fun `GIVEN a list of users, WHEN requesting it, THEN it returns it`() {
         val repository = mockk<UserRepository> {
             every { findAll() } returns listOf(
-                UserEntity(
+                User(
                     id = "abc1",
                     email = EmailAddress("email@test.com"),
                     name = "Luís Soares",
@@ -31,7 +31,7 @@ object ListUsersTest {
         verify(exactly = 1) { repository.findAll() }
         assertEquals(
             listOf(
-                UserEntity(
+                User(
                     id = "abc1",
                     email = EmailAddress("email@test.com"),
                     name = "Luís Soares",

@@ -1,7 +1,7 @@
 package web
 
 import domain.EmailAddress
-import domain.UserEntity
+import domain.User
 import features.CreateUser
 import io.javalin.Javalin
 import io.mockk.*
@@ -29,7 +29,7 @@ object CreateUserTest {
 
     @Test
     fun `GIVEN a user json, WHEN posting it, THEN it creates it and replies 201`() {
-        val userCapture = slot<UserEntity>()
+        val userCapture = slot<User>()
         every { useCase.execute(capture(userCapture)) } just Runs
         val request = newBuilder()
             .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís", "password": "password"} """))
@@ -39,7 +39,7 @@ object CreateUserTest {
 
         verify(exactly = 1) {
             useCase.execute(
-                UserEntity(
+                User(
                     userCapture.captured.id,
                     email = EmailAddress("lsoares@gmail.com"),
                     name = "Luís",
@@ -52,7 +52,7 @@ object CreateUserTest {
 
     @Test
     fun `GIVEN an existing user json, WHEN posting it, THEN it handles the use case exception with 409`() {
-        every { useCase.execute(any()) } throws UserEntity.UserAlreadyExists()
+        every { useCase.execute(any()) } throws User.UserAlreadyExists()
         val request = newBuilder()
             .POST(ofString("""{ "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"}"""))
             .uri(URI("http://localhost:1234")).build()
