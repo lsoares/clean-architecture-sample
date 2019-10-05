@@ -1,5 +1,6 @@
 package features
 
+import domain.EmailAddress
 import domain.UserEntity
 import domain.UserRepository
 import io.mockk.every
@@ -18,7 +19,7 @@ object ListUsersTest {
             every { findAll() } returns listOf(
                 UserEntity(
                     id = "abc1",
-                    email = "email",
+                    email = EmailAddress("email@test.com"),
                     name = "Luís Soares",
                     hashedPassword = "hashed"
                 )
@@ -29,7 +30,14 @@ object ListUsersTest {
 
         verify(exactly = 1) { repository.findAll() }
         assertEquals(
-            listOf(UserEntity(id = "abc1", email = "email", name = "Luís Soares", hashedPassword = "hashed")),
+            listOf(
+                UserEntity(
+                    id = "abc1",
+                    email = EmailAddress("email@test.com"),
+                    name = "Luís Soares",
+                    hashedPassword = "hashed"
+                )
+            ),
             users
         )
     }
