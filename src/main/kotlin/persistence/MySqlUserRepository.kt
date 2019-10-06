@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class MySqlUserRepository(private val database: Database) : UserRepository {
 
-    object UserSchema : Table("users") {
+    private object UserSchema : Table("users") {
         val id = varchar("id", 36).primaryKey()
         val email = varchar("email", 50).uniqueIndex()
         val name = varchar("name", 50)
@@ -48,7 +48,7 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
         transaction(database) { UserSchema.deleteAll() }
     }
 
-    fun createSchema() {
+    override fun createSchema() {
         transaction(database) {
             SchemaUtils.createMissingTablesAndColumns(UserSchema)
         }

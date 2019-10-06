@@ -5,6 +5,7 @@ import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
 import domain.IdGenerator
+import domain.UserRepository
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
@@ -24,11 +25,11 @@ import java.net.http.HttpRequest.newBuilder
 import java.net.http.HttpResponse.BodyHandlers.discarding
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
-object IntegrationTest {
+object IntegrationTestWithMySql {
 
     private lateinit var webAppConfig: WebAppConfig
     private lateinit var dbServer: EmbeddedMysql
-    private lateinit var userRepository: MySqlUserRepository
+    private lateinit var userRepository: UserRepository
     private val httpClient = newHttpClient()
 
     @BeforeAll
@@ -36,11 +37,15 @@ object IntegrationTest {
     fun setup() {
         val config = aMysqldConfig(Version.v5_7_latest).withPort(3301).withUser("user", "pass").build()
         dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
-        val dbUrl = "jdbc:mysql://user:pass@localhost:3301/test_schema"
-        userRepository = MySqlUserRepository(Database.connect(url = dbUrl, driver = "com.mysql.cj.jdbc.Driver"))
+        userRepository = MySqlUserRepository(
+            Database.connect(
+                url = "jdbc:mysql://user:pass@localhost:3301/test_schema",
+                driver = "com.mysql.cj.jdbc.Driver"
+            )
+        )
 
         userRepository.createSchema()
-        webAppConfig = WebAppConfig(dbUrl = dbUrl, port = 8081)
+        webAppConfig = WebAppConfig(userRepository, 8081)
         webAppConfig.start()
     }
 
