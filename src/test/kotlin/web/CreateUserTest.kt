@@ -53,11 +53,11 @@ object CreateUserTest {
     @Test
     fun `GIVEN an existing user json, WHEN posting it, THEN it handles the use case exception with 409`() {
         every { useCase.execute(any()) } throws User.UserAlreadyExists()
-        val request = newBuilder()
-            .POST(ofString("""{ "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"}"""))
-            .uri(URI("http://localhost:1234")).build()
+        val jsonBody = """{ "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"}"""
 
-        val response = httpClient.send(request, ofString())
+        val response = httpClient.send(
+            newBuilder().POST(ofString(jsonBody)).uri(URI("http://localhost:1234")).build(), ofString()
+        )
 
         verify(exactly = 1) { useCase.execute(any()) }
         assertEquals(HttpStatus.CONFLICT_409, response.statusCode())
