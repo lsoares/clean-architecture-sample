@@ -6,7 +6,6 @@ import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
@@ -15,12 +14,10 @@ import java.net.http.HttpRequest.newBuilder
 import java.net.http.HttpResponse.BodyHandlers.discarding
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
-open class IntegrationTest {
+object IntegrationTest {
 
-    protected lateinit var webAppConfig: WebAppConfig
     private val httpClient = newHttpClient()
 
-    @Test
     fun `GIVEN a user's json, WHEN posting it, THEN it creates a user`() {
         mockkObject(IdGenerator)
         every { IdGenerator.generate() } returns "1" andThen "2"
@@ -46,7 +43,6 @@ open class IntegrationTest {
         unmockkObject(IdGenerator)
     }
 
-    @Test
     fun `GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`() {
         val creationRequest = newBuilder()
             .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))

@@ -11,10 +11,12 @@ import domain.UserRepository
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import persistence.MongoDBUserRepository
 
-object IntegrationTestWithMongoDB : IntegrationTest() {
+object IntegrationTestWithMongoDB {
 
+    private lateinit var webAppConfig: WebAppConfig
     private lateinit var mongodExe: MongodExecutable
     private lateinit var mongod: MongodProcess
     private lateinit var userRepository: UserRepository
@@ -36,6 +38,16 @@ object IntegrationTestWithMongoDB : IntegrationTest() {
     @BeforeEach
     fun beforeEach() {
         userRepository.deleteAll()
+    }
+
+    @Test
+    fun `GIVEN a user's json, WHEN posting it, THEN it creates a user`() {
+        IntegrationTest.`GIVEN a user's json, WHEN posting it, THEN it creates a user`()
+    }
+
+    @Test
+    fun `GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`() {
+        IntegrationTest.`GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`()
     }
 
     @AfterAll
