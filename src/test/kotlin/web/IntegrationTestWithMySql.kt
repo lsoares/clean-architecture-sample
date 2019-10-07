@@ -9,10 +9,12 @@ import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import persistence.MySqlUserRepository
 
-object IntegrationTestWithMySql : IntegrationTest() {
+object IntegrationTestWithMySql {
 
+    private lateinit var webAppConfig: WebAppConfig
     private lateinit var dbServer: EmbeddedMysql
     private lateinit var userRepository: UserRepository
 
@@ -34,6 +36,16 @@ object IntegrationTestWithMySql : IntegrationTest() {
     @BeforeEach
     fun beforeEach() {
         userRepository.deleteAll()
+    }
+
+    @Test
+    fun `GIVEN a user's json, WHEN posting it, THEN it creates a user`() {
+        IntegrationTest.`GIVEN a user's json, WHEN posting it, THEN it creates a user`()
+    }
+
+    @Test
+    fun `GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`() {
+        IntegrationTest.`GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`()
     }
 
     @AfterAll
