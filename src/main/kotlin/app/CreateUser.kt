@@ -1,4 +1,4 @@
-package features
+package app
 
 import domain.User
 import domain.UserRepository

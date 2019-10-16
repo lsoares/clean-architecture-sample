@@ -1,7 +1,7 @@
-package web
+package adapters.web
 
+import app.ListUsers
 import domain.User
-import features.ListUsers
 import io.javalin.http.Context
 
 class ListUsers(private val listUsers: ListUsers) : io.javalin.http.Handler {

@@ -1,8 +1,8 @@
-package web
+package adapters.web
 
+import app.ListUsers
 import domain.EmailAddress
 import domain.User
-import features.ListUsers
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
 import io.mockk.every

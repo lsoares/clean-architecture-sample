@@ -1,8 +1,8 @@
-package web
+package adapters.web
 
+import app.CreateUser
 import domain.EmailAddress
 import domain.User
-import features.CreateUser
 import io.javalin.Javalin
 import io.mockk.*
 import org.eclipse.jetty.http.HttpStatus

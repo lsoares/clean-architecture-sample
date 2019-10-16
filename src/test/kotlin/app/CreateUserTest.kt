@@ -1,4 +1,4 @@
-package features
+package app
 
 import domain.EmailAddress
 import domain.User
