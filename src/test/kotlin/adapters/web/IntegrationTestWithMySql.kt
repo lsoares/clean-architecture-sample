@@ -1,37 +1,35 @@
-package web
+package adapters.web
 
-import de.flapdoodle.embed.mongo.MongodExecutable
-import de.flapdoodle.embed.mongo.MongodProcess
-import de.flapdoodle.embed.mongo.MongodStarter
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder
-import de.flapdoodle.embed.mongo.config.Net
-import de.flapdoodle.embed.mongo.distribution.Version
-import de.flapdoodle.embed.process.runtime.Network
+import com.wix.mysql.EmbeddedMysql
+import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
+import com.wix.mysql.config.MysqldConfig.aMysqldConfig
+import com.wix.mysql.distribution.Version
 import domain.UserRepository
+import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import persistence.MongoDBUserRepository
+import persistence.MySqlUserRepository
 
-object IntegrationTestWithMongoDB {
+object IntegrationTestWithMySql {
 
     private lateinit var webAppConfig: WebAppConfig
-    private lateinit var mongodExe: MongodExecutable
-    private lateinit var mongod: MongodProcess
+    private lateinit var dbServer: EmbeddedMysql
     private lateinit var userRepository: UserRepository
 
     @BeforeAll
     @JvmStatic
     fun setup() {
-        mongodExe = MongodStarter.getDefaultInstance().prepare(
-            MongodConfigBuilder()
-                .version(Version.Main.PRODUCTION)
-                .net(Net("localhost", 12345, Network.localhostIsIPv6()))
-                .build()
+        val config = aMysqldConfig(Version.v5_7_latest).withPort(3301).withUser("user", "pass").build()
+        dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
+        userRepository = MySqlUserRepository(
+            Database.connect(
+                url = "jdbc:mysql://user:pass@localhost:3301/test_schema",
+                driver = "com.mysql.cj.jdbc.Driver"
+            )
         )
-        mongod = mongodExe.start()
-        userRepository = MongoDBUserRepository("localhost", 12345, "db123").apply { createSchema() }
+        userRepository.createSchema()
         webAppConfig = WebAppConfig(userRepository, 8081).apply { start() }
     }
 
@@ -54,7 +52,6 @@ object IntegrationTestWithMongoDB {
     @JvmStatic
     fun afterAll() {
         webAppConfig.stop()
-        mongod.stop()
-        mongodExe.stop()
+        dbServer.stop()
     }
 }

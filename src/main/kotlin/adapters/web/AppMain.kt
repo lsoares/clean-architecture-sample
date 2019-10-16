@@ -1,4 +1,4 @@
-package web
+package adapters.web
 
 import domain.UserRepository
 import io.javalin.Javalin
@@ -21,8 +21,8 @@ class WebAppConfig(userRepository: UserRepository, private val port: Int) {
     private var javalinApp: Javalin = Javalin.create().routes {
         get { it.result("check health") }
         path("users") {
-            get(ListUsers(features.ListUsers(userRepository)))
-            post(CreateUser(features.CreateUser(userRepository)))
+            get(ListUsers(app.ListUsers(userRepository)))
+            post(CreateUser(app.CreateUser(userRepository)))
         }
     }
 
