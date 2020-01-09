@@ -14,7 +14,7 @@ object UserTest {
     }
 
     @Test
-    fun `GIVEN a invalid user, WHEN creating it, THEN exception throws exception`() {
+    fun `GIVEN a invalid user, WHEN creating it, THEN throws exception`() {
         assertThrows<User.InvalidUser> {
             User(email = EmailAddress("l@a.b"), password = "1", name = "Luís")
         }

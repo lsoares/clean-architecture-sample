@@ -15,9 +15,8 @@ data class User(
     private val validator = Validation.buildDefaultValidatorFactory().validator
 
     init {
-        if (id == null) {
-            id = IdGenerator.generate()
-        }
+        if (id == null) id = IdGenerator.generate()
+
         password?.let {
             hashedPassword = PasswordEncoder.encode(password)
             validator.validate(this).apply {
