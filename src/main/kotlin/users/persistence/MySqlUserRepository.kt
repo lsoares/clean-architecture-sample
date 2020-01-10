@@ -44,11 +44,11 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
         }
     }
 
-    override fun deleteAll() {
+    fun deleteAll() {
         transaction(database) { UserSchema.deleteAll() }
     }
 
-    override fun createSchema() {
+    fun createSchema() {
         transaction(database) {
             SchemaUtils.createMissingTablesAndColumns(UserSchema)
         }

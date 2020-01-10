@@ -29,14 +29,15 @@ object IntegrationTestWithMySql {
                 url = "jdbc:mysql://user:pass@localhost:3301/test_schema",
                 driver = "com.mysql.cj.jdbc.Driver"
             )
-        )
-        userRepository.createSchema()
+        ).also {
+            it.createSchema()
+        }
         webAppConfig = WebAppConfig(userRepository, 8081).apply { start() }
     }
 
     @BeforeEach
     fun beforeEach() {
-        userRepository.deleteAll()
+        (userRepository as MySqlUserRepository).deleteAll()
     }
 
     @Test
