@@ -38,7 +38,7 @@ object IntegrationTestWithMongoDB {
 
     @BeforeEach
     fun beforeEach() {
-        userRepository.deleteAll()
+        (userRepository as MongoDBUserRepository).deleteAll()
     }
 
     @Test

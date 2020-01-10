@@ -24,7 +24,7 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
         var hashedPassword: String
     )
 
-    override fun createSchema() {
+    fun createSchema() {
         usersColection.createIndex(Document("email", 1), IndexOptions().unique(true))
     }
 
@@ -48,7 +48,7 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
         }
     }
 
-    override fun deleteAll() {
+    fun deleteAll() {
         usersColection.deleteMany(Document())
     }
 }
