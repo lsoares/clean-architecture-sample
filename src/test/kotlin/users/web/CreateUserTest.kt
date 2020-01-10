@@ -1,13 +1,13 @@
-package adapters.web
+package users.web
 
-import app.CreateUser
-import domain.EmailAddress
-import domain.User
 import io.javalin.Javalin
 import io.mockk.*
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import users.domain.EmailAddress
+import users.domain.User
+import users.usecases.CreateUser
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.BodyPublishers.ofString
@@ -24,7 +24,7 @@ object CreateUserTest {
     @BeforeAll
     @JvmStatic
     fun setup() {
-        server = Javalin.create().post("/", CreateUser(useCase)).start(1234)
+        server = Javalin.create().post("/", users.web.handlers.CreateUser(useCase)).start(1234)
     }
 
     @Test

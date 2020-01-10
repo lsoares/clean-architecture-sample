@@ -1,4 +1,4 @@
-package domain
+package users.domain
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals

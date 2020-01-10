@@ -1,4 +1,4 @@
-package domain
+package users.domain
 
 interface UserRepository {
     fun createSchema()

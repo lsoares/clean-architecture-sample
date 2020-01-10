@@ -1,4 +1,4 @@
-package domain
+package users.domain
 
 import javax.validation.Validation
 import javax.validation.constraints.Email

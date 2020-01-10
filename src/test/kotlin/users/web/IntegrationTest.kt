@@ -1,12 +1,12 @@
-package adapters.web
+package users.web
 
-import domain.IdGenerator
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.skyscreamer.jsonassert.JSONAssert
+import users.domain.IdGenerator
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.BodyPublishers.ofString

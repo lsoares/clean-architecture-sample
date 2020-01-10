@@ -1,16 +1,17 @@
-package adapters.web
+package users.web
 
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
-import domain.UserRepository
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import persistence.MySqlUserRepository
+import users.WebAppConfig
+import users.domain.UserRepository
+import users.persistence.MySqlUserRepository
 
 object IntegrationTestWithMySql {
 

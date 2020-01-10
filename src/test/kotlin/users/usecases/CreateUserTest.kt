@@ -1,11 +1,11 @@
-package app
+package users.usecases
 
-import domain.EmailAddress
-import domain.User
-import domain.UserRepository
 import io.mockk.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import users.domain.EmailAddress
+import users.domain.User
+import users.domain.UserRepository
 
 @DisplayName("Create user use case")
 object CreateUserTest {

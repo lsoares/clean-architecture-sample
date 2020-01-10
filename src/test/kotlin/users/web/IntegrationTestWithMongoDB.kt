@@ -1,4 +1,4 @@
-package adapters.web
+package users.web
 
 import de.flapdoodle.embed.mongo.MongodExecutable
 import de.flapdoodle.embed.mongo.MongodProcess
@@ -7,12 +7,13 @@ import de.flapdoodle.embed.mongo.config.MongodConfigBuilder
 import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
-import domain.UserRepository
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import persistence.MongoDBUserRepository
+import users.WebAppConfig
+import users.domain.UserRepository
+import users.persistence.MongoDBUserRepository
 
 object IntegrationTestWithMongoDB {
 

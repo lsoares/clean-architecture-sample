@@ -1,14 +1,14 @@
-package persistence
+package users.persistence
 
 import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
-import domain.EmailAddress
-import domain.User
-import domain.UserRepository
 import org.bson.Document
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.save
+import users.domain.EmailAddress
+import users.domain.User
+import users.domain.UserRepository
 
 class MongoDBUserRepository(host: String, port: Int, database: String) : UserRepository {
 
@@ -37,10 +37,10 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
         try {
             usersColection.save(
                 UserSchema(
-                    id = user.id ?: throw RuntimeException("missing id"),
+                    id = user.id!!,
                     email = user.email.value,
                     name = user.name,
-                    hashedPassword = user.hashedPassword ?: throw RuntimeException("missing hashed password")
+                    hashedPassword = user.hashedPassword!!
                 )
             )
         } catch (ex: MongoWriteException) {

@@ -1,11 +1,11 @@
-package persistence
+package users.persistence
 
-import domain.EmailAddress
-import domain.User
-import domain.UserRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import users.domain.EmailAddress
+import users.domain.User
+import users.domain.UserRepository
 
 class MySqlUserRepository(private val database: Database) : UserRepository {
 
@@ -31,10 +31,10 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
         transaction(database) {
             try {
                 UserSchema.insert {
-                    it[id] = user.id ?: throw RuntimeException("missing id.")
+                    it[id] = user.id!!
                     it[email] = user.email.value
                     it[name] = user.name
-                    it[hashedPassword] = user.hashedPassword ?: throw RuntimeException("password must be hashed first")
+                    it[hashedPassword] = user.hashedPassword!!
                 }
             } catch (ex: ExposedSQLException) {
                 if (ex.message != null && ex.message!!.contains("users_email_unique")) {
