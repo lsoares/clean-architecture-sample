@@ -1,8 +1,5 @@
-package adapters.web
+package users.web
 
-import app.ListUsers
-import domain.EmailAddress
-import domain.User
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -12,6 +9,9 @@ import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.skyscreamer.jsonassert.JSONAssert
+import users.domain.EmailAddress
+import users.domain.User
+import users.usecases.ListUsers
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.newBuilder
@@ -27,7 +27,7 @@ object ListUsersTest {
     @JvmStatic
     fun setup() {
         listUsers = mockk()
-        server = Javalin.create().get("/", ListUsers(listUsers)).start(1234)
+        server = Javalin.create().get("/", users.web.handlers.ListUsers(listUsers)).start(1234)
     }
 
     @Test

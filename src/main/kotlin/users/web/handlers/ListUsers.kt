@@ -1,10 +1,11 @@
-package adapters.web
+package users.web.handlers
 
-import app.ListUsers
-import domain.User
 import io.javalin.http.Context
+import io.javalin.http.Handler
+import users.domain.User
+import users.usecases.ListUsers
 
-class ListUsers(private val listUsers: ListUsers) : io.javalin.http.Handler {
+class ListUsers(private val listUsers: ListUsers) : Handler {
 
     override fun handle(ctx: Context) {
         ctx.json(listUsers.execute().toRepresenter())
