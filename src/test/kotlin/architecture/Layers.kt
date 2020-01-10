@@ -17,7 +17,7 @@ object Layers {
         .importPackages("users")
 
     @Test
-    fun `no one calls handlers directly`() {
+    fun `layered architecture`() {
         layeredArchitecture()
             .layer("web handlers").definedBy("..web.handlers")
             .layer("use cases").definedBy("..usecases")
@@ -29,7 +29,7 @@ object Layers {
     }
 
     @Test
-    fun test() {
+    fun `Javalin is only used by web layer`() {
         noClasses()
             .that().resideOutsideOfPackage("..web.handlers")
             .should().accessClassesThat().resideInAnyPackage("io.javalin..")
