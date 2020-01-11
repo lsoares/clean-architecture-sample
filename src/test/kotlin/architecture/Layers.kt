@@ -1,8 +1,10 @@
 package architecture
 
 
+import com.tngtech.archunit.base.DescribedPredicate.alwaysTrue
 import com.tngtech.archunit.base.DescribedPredicate.not
 import com.tngtech.archunit.core.domain.JavaClass.Predicates.belongToAnyOf
+import com.tngtech.archunit.core.domain.JavaClass.Predicates.type
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
 import com.tngtech.archunit.lang.conditions.ArchPredicates.are
@@ -25,6 +27,7 @@ object Layers {
             .whereLayer("web handlers").mayNotBeAccessedByAnyLayer()
             .whereLayer("use cases").mayOnlyBeAccessedByLayers("web handlers")
             .whereLayer("persistence").mayOnlyBeAccessedByLayers("use cases")
+            .ignoreDependency(type(WebAppConfig::class.java), alwaysTrue())
             .check(classes.that(are(not(belongToAnyOf(WebAppConfig::class.java)))))
     }
 
