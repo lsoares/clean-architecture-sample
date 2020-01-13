@@ -1,4 +1,4 @@
-package architecture
+package users.architecture
 
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses

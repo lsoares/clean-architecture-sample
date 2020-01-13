@@ -1,4 +1,4 @@
-package architecture
+package users.architecture
 
 import com.tngtech.archunit.base.DescribedPredicate.not
 import com.tngtech.archunit.core.domain.JavaClass.Predicates.belongToAnyOf
