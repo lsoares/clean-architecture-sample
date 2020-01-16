@@ -1,7 +1,9 @@
 package users.architecture
 
+import com.tngtech.archunit.base.DescribedPredicate.alwaysTrue
 import com.tngtech.archunit.base.DescribedPredicate.not
 import com.tngtech.archunit.core.domain.JavaClass.Predicates.belongToAnyOf
+import com.tngtech.archunit.core.domain.properties.HasName.Predicates.nameMatching
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
 import com.tngtech.archunit.lang.conditions.ArchPredicates.are
@@ -24,7 +26,12 @@ object Layers {
             .whereLayer("web handlers").mayNotBeAccessedByAnyLayer()
             .whereLayer("use cases").mayOnlyBeAccessedByLayers("web handlers")
             .whereLayer("persistence").mayOnlyBeAccessedByLayers("use cases")
-            .check(classes.that(not(belongToAnyOf(WebAppConfig::class.java))))
+            .ignoreDependency(
+                nameMatching(".*\\.AppMainKt").or(
+                    nameMatching(".*\\.WebAppConfig\\$.*")
+                ), alwaysTrue()
+            )
+            .check(classes)
     }
 
     @Test
