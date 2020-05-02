@@ -9,13 +9,12 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import users.WebAppConfig
 import users.domain.UserRepository
 import users.persistence.MySqlUserRepository
 
 object IntegrationTestWithMySql {
 
-    private lateinit var webAppConfig: WebAppConfig
+    private lateinit var webApp: WebApp
     private lateinit var dbServer: EmbeddedMysql
     private lateinit var userRepository: UserRepository
 
@@ -32,7 +31,7 @@ object IntegrationTestWithMySql {
         ).also {
             it.createSchema()
         }
-        webAppConfig = WebAppConfig(userRepository, 8081).apply { start() }
+        webApp = WebApp(userRepository, 8081).apply { start() }
     }
 
     @BeforeEach
@@ -53,7 +52,7 @@ object IntegrationTestWithMySql {
     @AfterAll
     @JvmStatic
     fun afterAll() {
-        webAppConfig.stop()
+        webApp.close()
         dbServer.stop()
     }
 }

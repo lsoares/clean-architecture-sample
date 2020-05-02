@@ -24,7 +24,7 @@ object CreateUserTest {
     @BeforeAll
     @JvmStatic
     fun setup() {
-        server = Javalin.create().post("/", users.web.handlers.CreateUser(useCase)).start(1234)
+        server = Javalin.create().post("/", CreateUser(useCase)).start(1234)
     }
 
     @Test
