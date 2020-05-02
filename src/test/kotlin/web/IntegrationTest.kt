@@ -1,12 +1,12 @@
-package users.web
+package web
 
+import domain.IdGenerator
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.skyscreamer.jsonassert.JSONAssert
-import users.domain.IdGenerator
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.BodyPublishers.ofString
@@ -18,7 +18,7 @@ object IntegrationTest {
 
     private val httpClient = newHttpClient()
 
-    fun `GIVEN a user's json, WHEN posting it, THEN it creates a user`() {
+    fun `it creates a user when posting a user json`() {
         mockkObject(IdGenerator)
         every { IdGenerator.generate() } returns "1" andThen "2"
         httpClient.send(
@@ -43,7 +43,7 @@ object IntegrationTest {
         unmockkObject(IdGenerator)
     }
 
-    fun `GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`() {
+    fun `it does not create a repeated user when postign twice`() {
         val creationRequest = newBuilder()
             .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
             .uri(URI("http://localhost:8081/users")).build()

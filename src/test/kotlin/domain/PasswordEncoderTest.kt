@@ -1,10 +1,10 @@
-package users.domain
+package domain
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 
-object PasswordEncoderTest {
+class PasswordEncoderTest {
 
     @Test
     fun `GIVEN a string, WHEN encoding it, THEN it encodes to another string`() {

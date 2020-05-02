@@ -1,13 +1,13 @@
-package users.web
+package web
 
+import domain.EmailAddress
+import domain.User
 import io.javalin.Javalin
 import io.mockk.*
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import users.domain.EmailAddress
-import users.domain.User
-import users.usecases.CreateUser
+import usecases.CreateUser
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.BodyPublishers.ofString
@@ -15,16 +15,15 @@ import java.net.http.HttpRequest.newBuilder
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
 @DisplayName("Create user handler")
-object CreateUserTest {
+class CreateUserTest {
 
     private val useCase = mockk<CreateUser>()
     private val httpClient = newHttpClient()
     private lateinit var server: Javalin
 
     @BeforeAll
-    @JvmStatic
     fun setup() {
-        server = Javalin.create().post("/", CreateUser(useCase)).start(1234)
+        server = Javalin.create().post("/", CreateUserHandler(useCase)).start(1234)
     }
 
     @Test
@@ -67,7 +66,6 @@ object CreateUserTest {
     fun afterEach() = clearAllMocks()
 
     @AfterAll
-    @JvmStatic
     fun afterAll() {
         server.stop()
     }

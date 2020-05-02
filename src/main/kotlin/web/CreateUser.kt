@@ -1,13 +1,13 @@
-package users.web
+package web
 
+import domain.EmailAddress
+import domain.User
 import io.javalin.http.Context
 import io.javalin.http.Handler
 import org.eclipse.jetty.http.HttpStatus
-import users.domain.EmailAddress
-import users.domain.User
-import users.usecases.CreateUser
+import usecases.CreateUser
 
-class CreateUser(private val createUser: CreateUser) : Handler {
+class CreateUserHandler(private val createUser: CreateUser) : Handler {
 
     override fun handle(ctx: Context) {
         try {

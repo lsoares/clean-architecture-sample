@@ -1,14 +1,14 @@
-package users.persistence
+package persistence
 
 import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
+import domain.EmailAddress
+import domain.User
+import domain.UserRepository
 import org.bson.Document
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.save
-import users.domain.EmailAddress
-import users.domain.User
-import users.domain.UserRepository
 
 class MongoDBUserRepository(host: String, port: Int, database: String) : UserRepository {
 

@@ -1,4 +1,4 @@
-package users.domain
+package domain
 
 import javax.validation.Validation
 import javax.validation.constraints.Email
@@ -9,7 +9,7 @@ data class EmailAddress(@field:Email val value: String) {
 
     init {
         validator.validate(this).apply {
-            if (isNotEmpty()) throw InvalidEmail()
+            require(isEmpty()) { throw InvalidEmail() }
         }
     }
 

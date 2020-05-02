@@ -1,10 +1,10 @@
-package users.domain
+package domain
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-object EmailAddressTest {
+class EmailAddressTest {
 
     @Test
     fun `GIVEN a valid email, WHEN creating it, THEN creates its entity`() {

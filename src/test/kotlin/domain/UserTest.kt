@@ -1,10 +1,10 @@
-package users.domain
+package domain
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
-object UserTest {
+class UserTest {
 
     @Test
     fun `GIVEN a valid user, WHEN creating it, THEN creates its entity`() {

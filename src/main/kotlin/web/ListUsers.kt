@@ -1,11 +1,11 @@
-package users.web
+package web
 
+import domain.User
 import io.javalin.http.Context
 import io.javalin.http.Handler
-import users.domain.User
-import users.usecases.ListUsers
+import usecases.ListUsers
 
-class ListUsers(private val listUsers: ListUsers) : Handler {
+class ListUsersHandler(private val listUsers: ListUsers) : Handler {
 
     override fun handle(ctx: Context) {
         ctx.json(listUsers.execute().toRepresenter())

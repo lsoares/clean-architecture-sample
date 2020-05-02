@@ -1,11 +1,11 @@
-package users.persistence
+package persistence
 
+import domain.EmailAddress
+import domain.User
+import domain.UserRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import users.domain.EmailAddress
-import users.domain.User
-import users.domain.UserRepository
 
 class MySqlUserRepository(private val database: Database) : UserRepository {
 
