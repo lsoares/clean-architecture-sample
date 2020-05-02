@@ -17,19 +17,21 @@ import java.net.http.HttpResponse.BodyHandlers.ofString
 @DisplayName("Create user handler")
 class CreateUserTest {
 
-    private val useCase = mockk<CreateUser>()
+    private val createUser = mockk<CreateUser>()
     private val httpClient = newHttpClient()
     private lateinit var server: Javalin
 
     @BeforeAll
     fun setup() {
-        server = Javalin.create().post("/", CreateUserHandler(useCase)).start(1234)
+        server = Javalin.create()
+            .post("/", CreateUserHandler(createUser))
+            .start(1234)
     }
 
     @Test
     fun `GIVEN a user json, WHEN posting it, THEN it creates it and replies 201`() {
         val userCapture = slot<User>()
-        every { useCase.execute(capture(userCapture)) } just Runs
+        every { createUser(capture(userCapture)) } just Runs
         val request = newBuilder()
             .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís", "password": "password"} """))
             .uri(URI("http://localhost:1234")).build()
@@ -37,7 +39,7 @@ class CreateUserTest {
         val response = httpClient.send(request, ofString())
 
         verify(exactly = 1) {
-            useCase.execute(
+            createUser(
                 User(
                     userCapture.captured.id,
                     email = EmailAddress("lsoares@gmail.com"),
@@ -51,14 +53,14 @@ class CreateUserTest {
 
     @Test
     fun `GIVEN an existing user json, WHEN posting it, THEN it handles the use case exception with 409`() {
-        every { useCase.execute(any()) } throws User.UserAlreadyExists()
+        every { createUser(any()) } throws User.UserAlreadyExists()
         val jsonBody = """{ "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"}"""
 
         val response = httpClient.send(
             newBuilder().POST(ofString(jsonBody)).uri(URI("http://localhost:1234")).build(), ofString()
         )
 
-        verify(exactly = 1) { useCase.execute(any()) }
+        verify(exactly = 1) { createUser(any()) }
         assertEquals(HttpStatus.CONFLICT_409, response.statusCode())
     }
 

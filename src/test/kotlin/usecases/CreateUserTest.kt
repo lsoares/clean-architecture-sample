@@ -16,8 +16,9 @@ class CreateUserTest {
         val repository = mockk<UserRepository> {
             every { save(user.copy(hashedPassword = "encoded")) } just Runs
         }
+        val createUser = CreateUser(repository)
 
-        CreateUser(repository).execute(user)
+        createUser(user)
 
         verify(exactly = 1) { repository.save(user.copy(hashedPassword = "encoded")) }
     }

@@ -25,8 +25,9 @@ class ListUsersTest {
                 )
             )
         }
+        val listUsers = ListUsers(repository)
 
-        val users = ListUsers(repository).execute()
+        val users = listUsers()
 
         verify(exactly = 1) { repository.findAll() }
         assertEquals(
