@@ -19,8 +19,8 @@ data class User(
 
         password?.let {
             hashedPassword = PasswordEncoder.encode(password)
-            validator.validate(this).apply {
-                if (isNotEmpty()) throw InvalidUser(this)
+            validator.validate(this).run {
+                require(isEmpty()) { throw InvalidUser(this) }
             }
         }
     }

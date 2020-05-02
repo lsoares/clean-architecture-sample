@@ -27,7 +27,7 @@ object ListUsersTest {
     @JvmStatic
     fun setup() {
         listUsers = mockk()
-        server = Javalin.create().get("/", users.web.handlers.ListUsers(listUsers)).start(1234)
+        server = Javalin.create().get("/", ListUsers(listUsers)).start(1234)
     }
 
     @Test

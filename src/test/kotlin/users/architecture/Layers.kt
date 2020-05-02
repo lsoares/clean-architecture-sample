@@ -9,9 +9,11 @@ import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
 import com.tngtech.archunit.lang.conditions.ArchPredicates.are
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
 import com.tngtech.archunit.library.Architectures.layeredArchitecture
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import users.WebAppConfig
+import users.web.WebApp
 
+@Disabled
 object Layers {
     private val classes = ClassFileImporter()
         .withImportOption(DoNotIncludeTests())
@@ -20,7 +22,7 @@ object Layers {
     @Test
     fun `layered architecture`() {
         layeredArchitecture()
-            .layer("web handlers").definedBy("..web.handlers")
+            .layer("web handlers").definedBy("..web")
             .layer("use cases").definedBy("..usecases")
             .layer("persistence").definedBy("..persistence")
             .whereLayer("web handlers").mayNotBeAccessedByAnyLayer()
@@ -40,6 +42,6 @@ object Layers {
             .that().resideOutsideOfPackage("..web.handlers")
             .should().accessClassesThat().resideInAnyPackage("io.javalin..")
             .because("Javalin is to be used by the web adapter")
-            .check(classes.that(are(not(belongToAnyOf(WebAppConfig::class.java)))))
+            .check(classes.that(are(not(belongToAnyOf(WebApp::class.java)))))
     }
 }
