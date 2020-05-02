@@ -1,4 +1,4 @@
-package users.web
+package web
 
 import de.flapdoodle.embed.mongo.MongodExecutable
 import de.flapdoodle.embed.mongo.MongodProcess
@@ -7,14 +7,14 @@ import de.flapdoodle.embed.mongo.config.MongodConfigBuilder
 import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
+import domain.UserRepository
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import users.domain.UserRepository
-import users.persistence.MongoDBUserRepository
+import persistence.MongoDBUserRepository
 
-object IntegrationTestWithMongoDB {
+class IntegrationTestWithMongoDB {
 
     private lateinit var webApp: WebApp
     private lateinit var mongodExe: MongodExecutable
@@ -22,7 +22,6 @@ object IntegrationTestWithMongoDB {
     private lateinit var userRepository: UserRepository
 
     @BeforeAll
-    @JvmStatic
     fun setup() {
         mongodExe = MongodStarter.getDefaultInstance().prepare(
             MongodConfigBuilder()
@@ -42,16 +41,15 @@ object IntegrationTestWithMongoDB {
 
     @Test
     fun `GIVEN a user's json, WHEN posting it, THEN it creates a user`() {
-        IntegrationTest.`GIVEN a user's json, WHEN posting it, THEN it creates a user`()
+        IntegrationTest.`it creates a user when posting a user json`()
     }
 
     @Test
     fun `GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`() {
-        IntegrationTest.`GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`()
+        IntegrationTest.`it does not create a repeated user when postign twice`()
     }
 
     @AfterAll
-    @JvmStatic
     fun afterAll() {
         webApp.close()
         mongod.stop()

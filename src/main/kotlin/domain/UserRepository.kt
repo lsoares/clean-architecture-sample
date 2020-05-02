@@ -1,4 +1,4 @@
-package users.domain
+package domain
 
 interface UserRepository {
     fun findAll(): List<User>

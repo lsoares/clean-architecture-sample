@@ -1,17 +1,17 @@
-package users.usecases
+package usecases
 
+import domain.EmailAddress
+import domain.User
+import domain.UserRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import users.domain.EmailAddress
-import users.domain.User
-import users.domain.UserRepository
 
 @DisplayName("List users use case")
-object ListUsersTest {
+class ListUsersTest {
 
     @Test
     fun `GIVEN a list of users, WHEN requesting it, THEN it returns it`() {

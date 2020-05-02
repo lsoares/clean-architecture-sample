@@ -1,11 +1,11 @@
-package users.web
+package web
 
+import Config
+import domain.UserRepository
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
-import users.Config
-import users.domain.UserRepository
-import users.usecases.CreateUser
-import users.usecases.ListUsers
+import usecases.CreateUser
+import usecases.ListUsers
 
 fun main() {
     WebApp(
@@ -19,8 +19,8 @@ class WebApp(userRepository: UserRepository, private val port: Int) : AutoClosea
     private var javalinApp: Javalin = Javalin.create().routes {
         get { it.result("check health") }
         path("users") {
-            get(ListUsers(ListUsers(userRepository)))
-            post(CreateUser(CreateUser(userRepository)))
+            get(ListUsersHandler(ListUsers(userRepository)))
+            post(CreateUserHandler(CreateUser(userRepository)))
         }
     }
 

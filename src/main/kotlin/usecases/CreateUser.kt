@@ -1,7 +1,7 @@
-package users.usecases
+package usecases
 
-import users.domain.User
-import users.domain.UserRepository
+import domain.User
+import domain.UserRepository
 
 class CreateUser(private val userRepo: UserRepository) {
 

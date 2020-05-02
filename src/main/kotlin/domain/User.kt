@@ -1,4 +1,4 @@
-package users.domain
+package domain
 
 import java.util.*
 import javax.validation.ConstraintViolation
