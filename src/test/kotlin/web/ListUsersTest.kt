@@ -26,12 +26,14 @@ class ListUsersTest {
     @BeforeAll
     fun setup() {
         listUsers = mockk()
-        server = Javalin.create().get("/", ListUsersHandler(listUsers)).start(1234)
+        server = Javalin.create()
+            .get("/", ListUsersHandler(listUsers))
+            .start(1234)
     }
 
     @Test
     fun `GIVEN a list of users, WHEN requesting it, THEN it converts it to a json representation`() {
-        every { listUsers.execute() } returns listOf(
+        every { listUsers() } returns listOf(
             User(
                 id = "xyz",
                 email = EmailAddress("email@test.com"),
@@ -44,7 +46,7 @@ class ListUsersTest {
             newBuilder().GET().uri(URI("http://localhost:1234")).build(), ofString()
         )
 
-        verify(exactly = 1) { listUsers.execute() }
+        verify(exactly = 1) { listUsers() }
         assertEquals(HttpStatus.OK_200, response.statusCode())
         JSONAssert.assertEquals(
             """ [ { "id": "xyz", "name": "Luís", "email": "email@test.com" } ] """,

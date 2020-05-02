@@ -8,7 +8,7 @@ import usecases.ListUsers
 class ListUsersHandler(private val listUsers: ListUsers) : Handler {
 
     override fun handle(ctx: Context) {
-        ctx.json(listUsers.execute().toRepresenter())
+        ctx.json(listUsers().toRepresenter())
     }
 
     private fun List<User>.toRepresenter() =
