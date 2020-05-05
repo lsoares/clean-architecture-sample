@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test
 class PasswordEncoderTest {
 
     @Test
-    fun `GIVEN a string, WHEN encoding it, THEN it encodes to another string`() {
+    fun `encodes a string`() {
         assertNotEquals("abc", PasswordEncoder.encode("abc"))
     }
 
     @Test
-    fun `GIVEN a string, WHEN encoding it twice, THEN it encodes it the same way`() {
+    fun `encodes deterministically`() {
         assertEquals(PasswordEncoder.encode("abc"), PasswordEncoder.encode("abc"))
     }
 }

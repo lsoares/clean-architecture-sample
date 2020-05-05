@@ -20,36 +20,36 @@ class IntegrationTestWithMySql {
 
     @BeforeAll
     fun setup() {
-        val config = aMysqldConfig(Version.v5_7_latest).withPort(3301).withUser("user", "pass").build()
-        dbServer = anEmbeddedMysql(config).addSchema("test_schema").start()
+        val config = aMysqldConfig(Version.v5_7_latest)
+            .withPort(3301)
+            .withUser("user", "pass")
+        dbServer = anEmbeddedMysql(config.build()).addSchema("test_schema").start()
         userRepository = MySqlUserRepository(
             Database.connect(
                 url = "jdbc:mysql://user:pass@localhost:3301/test_schema",
                 driver = "com.mysql.cj.jdbc.Driver"
             )
-        ).also {
-            it.createSchema()
-        }
-        webApp = WebApp(userRepository, 8081).apply { start() }
+        ).also { it.createSchema() }
+        webApp = WebApp(userRepository, 8081).also { it.start() }
     }
 
     @BeforeEach
-    fun beforeEach() {
+    fun `before each`() {
         (userRepository as MySqlUserRepository).deleteAll()
     }
 
     @Test
-    fun `GIVEN a user's json, WHEN posting it, THEN it creates a user`() {
-        IntegrationTest.`it creates a user when posting a user json`()
+    fun `it creates a user when posting a user json`() {
+        IntegrationTest.`it creates two users when posting two different requests`()
     }
 
     @Test
-    fun `GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`() {
-        IntegrationTest.`it does not create a repeated user when postign twice`()
+    fun `it does not create a repeated user when posting twice`() {
+        IntegrationTest.`it does not create a repeated user when posting twice`()
     }
 
     @AfterAll
-    fun afterAll() {
+    fun `tear down`() {
         webApp.close()
         dbServer.stop()
     }

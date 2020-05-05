@@ -7,12 +7,12 @@ import org.junit.jupiter.api.assertThrows
 class EmailAddressTest {
 
     @Test
-    fun `GIVEN a valid email, WHEN creating it, THEN creates its entity`() {
+    fun `creates a valid email address`() {
         assertEquals("lsoares@test.com", EmailAddress("lsoares@test.com").value)
     }
 
     @Test
-    fun `GIVEN a invalid email, WHEN creating it, THEN throws exception`() {
+    fun `throws validation exception`() {
         assertThrows<EmailAddress.InvalidEmail> {
             EmailAddress("lsoares")
         }

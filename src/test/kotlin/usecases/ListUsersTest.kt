@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 class ListUsersTest {
 
     @Test
-    fun `GIVEN a list of users, WHEN requesting it, THEN it returns it`() {
+    fun `it returns a list of users from the repo`() {
         val repository = mockk<UserRepository> {
             every { findAll() } returns listOf(
                 User(
