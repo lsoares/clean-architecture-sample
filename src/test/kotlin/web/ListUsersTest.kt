@@ -32,7 +32,7 @@ class ListUsersTest {
     }
 
     @Test
-    fun `GIVEN a list of users, WHEN requesting it, THEN it converts it to a json representation`() {
+    fun `it converts a list of users to json`() {
         every { listUsers() } returns listOf(
             User(
                 id = "xyz",
@@ -56,10 +56,10 @@ class ListUsersTest {
     }
 
     @AfterEach
-    fun afterEach() = clearAllMocks()
+    fun `after each`() = clearAllMocks()
 
     @AfterAll
-    fun tearDown() {
+    fun `tear down`() {
         server.stop()
     }
 }

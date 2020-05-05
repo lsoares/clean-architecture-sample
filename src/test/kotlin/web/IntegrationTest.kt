@@ -18,12 +18,12 @@ object IntegrationTest {
 
     private val httpClient = newHttpClient()
 
-    fun `it creates a user when posting a user json`() {
+    fun `it creates two users when posting two different requests`() {
         mockkObject(IdGenerator)
         every { IdGenerator.generate() } returns "1" andThen "2"
         httpClient.send(
             newBuilder()
-                .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
+                .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"} """))
                 .uri(URI("http://localhost:8081/users")).build(), discarding()
         )
         httpClient.send(
@@ -35,7 +35,7 @@ object IntegrationTest {
         val userList = httpClient.send(newBuilder().GET().uri(URI("http://localhost:8081/users")).build(), ofString())
 
         JSONAssert.assertEquals(
-            """ [ { "id": "1", "name": "Luís Soares", "email": "lsoares@gmail.com" },
+            """ [ { "id": "1", "name": "Luís Soares", "email": "luis.s@gmail.com" },
                             { "id": "2", "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
             userList.body(),
             true
@@ -43,9 +43,9 @@ object IntegrationTest {
         unmockkObject(IdGenerator)
     }
 
-    fun `it does not create a repeated user when postign twice`() {
+    fun `it does not create a repeated user when posting twice`() {
         val creationRequest = newBuilder()
-            .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"} """))
+            .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"} """))
             .uri(URI("http://localhost:8081/users")).build()
         val creation1Response = httpClient.send(creationRequest, discarding())
         assertEquals(HttpStatus.CREATED_201, creation1Response.statusCode())
@@ -56,8 +56,27 @@ object IntegrationTest {
         val listResponse =
             httpClient.send(newBuilder().GET().uri(URI("http://localhost:8081/users")).build(), ofString())
         JSONAssert.assertEquals(
-            """ [ { "name": "Luís Soares", "email": "lsoares@gmail.com" }] """,
+            """ [ { "name": "Luís Soares", "email": "luis.s@gmail.com" }] """,
             listResponse.body(), false
         )
+    }
+
+    fun `it deletes a user after creation`() {
+        val creationRequest = newBuilder()
+            .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"} """))
+            .uri(URI("http://localhost:8081/users")).build()
+        val creation1Response = httpClient.send(creationRequest, discarding())
+        assertEquals(HttpStatus.CREATED_201, creation1Response.statusCode())
+        val usersBefore = httpClient.send(newBuilder().GET().uri(URI("http://localhost:8081/users")).build(), ofString())
+        JSONAssert.assertNotEquals("[]", usersBefore.body(), true)
+
+        val deleteResponse = httpClient.send(
+            newBuilder().DELETE().uri(URI("http://localhost:8081/users/luis.s@gmail.com")).build(),
+            ofString()
+        )
+
+        assertEquals(HttpStatus.NO_CONTENT_204, deleteResponse.statusCode())
+        val usersAfter = httpClient.send(newBuilder().GET().uri(URI("http://localhost:8081/users")).build(), ofString())
+        JSONAssert.assertEquals("[]", usersAfter.body(), true)
     }
 }

@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 class CreateUserTest {
 
     @Test
-    fun `GIVEN a valid user, WHEN running the use case, THEN it calls the repo`() {
-        val user = User(email = EmailAddress("lsoares@gmail.com"), name = "Luís Soares", password = "toEncode")
+    fun `it calls the repo when saving a user`() {
+        val user = User(email = EmailAddress("luis.s@gmail.com"), name = "Luís Soares", password = "toEncode")
         val repository = mockk<UserRepository> {
             every { save(user.copy(hashedPassword = "encoded")) } just Runs
         }

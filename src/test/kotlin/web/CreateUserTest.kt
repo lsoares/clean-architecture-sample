@@ -29,11 +29,11 @@ class CreateUserTest {
     }
 
     @Test
-    fun `GIVEN a user json, WHEN posting it, THEN it creates it and replies 201`() {
+    fun `it creates a user when posting its json`() {
         val userCapture = slot<User>()
         every { createUser(capture(userCapture)) } just Runs
         val request = newBuilder()
-            .POST(ofString(""" { "email": "lsoares@gmail.com", "name": "Luís", "password": "password"} """))
+            .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís", "password": "password"} """))
             .uri(URI("http://localhost:1234")).build()
 
         val response = httpClient.send(request, ofString())
@@ -42,7 +42,7 @@ class CreateUserTest {
             createUser(
                 User(
                     userCapture.captured.id,
-                    email = EmailAddress("lsoares@gmail.com"),
+                    email = EmailAddress("luis.s@gmail.com"),
                     name = "Luís",
                     password = "password"
                 )
@@ -52,9 +52,9 @@ class CreateUserTest {
     }
 
     @Test
-    fun `GIVEN an existing user json, WHEN posting it, THEN it handles the use case exception with 409`() {
+    fun `it replies with 409 when posting an existing user`() {
         every { createUser(any()) } throws User.UserAlreadyExists()
-        val jsonBody = """{ "email": "lsoares@gmail.com", "name": "Luís Soares", "password": "password"}"""
+        val jsonBody = """{ "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"}"""
 
         val response = httpClient.send(
             newBuilder().POST(ofString(jsonBody)).uri(URI("http://localhost:1234")).build(), ofString()
@@ -65,10 +65,10 @@ class CreateUserTest {
     }
 
     @AfterEach
-    fun afterEach() = clearAllMocks()
+    fun `after each`() = clearAllMocks()
 
     @AfterAll
-    fun afterAll() {
+    fun `after all`() {
         server.stop()
     }
 }

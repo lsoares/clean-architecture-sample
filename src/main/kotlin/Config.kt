@@ -3,7 +3,7 @@ import persistence.MongoDBUserRepository
 import persistence.MySqlUserRepository
 
 object Config {
-    val database = Database.connect(url = System.getProperty("DB_URL"), driver = "com.mysql.cj.jdbc.Driver")
+    private val database = Database.connect(url = System.getProperty("DB_URL"), driver = "com.mysql.cj.jdbc.Driver")
     val userRepoMySql = MySqlUserRepository(database).apply { createSchema() }
     val userRepoMongoDb = MongoDBUserRepository("localhost", 12345, "db123")
 }

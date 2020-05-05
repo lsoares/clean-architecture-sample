@@ -35,22 +35,27 @@ class IntegrationTestWithMongoDB {
     }
 
     @BeforeEach
-    fun beforeEach() {
+    fun `before each`() {
         (userRepository as MongoDBUserRepository).deleteAll()
     }
 
     @Test
-    fun `GIVEN a user's json, WHEN posting it, THEN it creates a user`() {
-        IntegrationTest.`it creates a user when posting a user json`()
+    fun `it creates two users when posting two different requests`() {
+        IntegrationTest.`it creates two users when posting two different requests`()
     }
 
     @Test
-    fun `GIVEN an existing user's json, WHEN posting it, THEN it creates only the first`() {
-        IntegrationTest.`it does not create a repeated user when postign twice`()
+    fun `it does not create a repeated user when posting twice`() {
+        IntegrationTest.`it does not create a repeated user when posting twice`()
+    }
+
+    @Test
+    fun `it deletes a user after creation`() {
+        IntegrationTest.`it deletes a user after creation`()
     }
 
     @AfterAll
-    fun afterAll() {
+    fun `after all`() {
         webApp.close()
         mongod.stop()
         mongodExe.stop()
