@@ -10,7 +10,7 @@ import usecases.ListUsers
 fun main() {
     WebApp(
         userRepository = Config.userRepoMySql,
-        port = System.getProperty("PORT")?.toInt() ?: 8080
+        port = System.getenv("PORT")?.toInt() ?: 8080
     ).use(WebApp::start)
 }
 
