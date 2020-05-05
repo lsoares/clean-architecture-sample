@@ -16,9 +16,7 @@ apply plugin: 'application'
 
 repositories {
 	mavenCentral()
-	maven {
-		url 'https://dl.bintray.com/kotlin/exposed/'
-	}
+	jcenter()
 }
 
 compileKotlin {

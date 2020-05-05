@@ -9,8 +9,10 @@ import kotlin.random.Random.Default.nextInt
 import kotlin.random.Random.Default.nextLong
 
 fun main() {
-    val listUsers = ListUsers(Config.userRepoMongoDb)
-    val createUser = CreateUser(Config.userRepoMongoDb)
+//    val listUsers = ListUsers(Config.userRepoMongoDb)
+//    val createUser = CreateUser(Config.userRepoMongoDb)
+    val listUsers = ListUsers(Config.userRepoMySql)
+    val createUser = CreateUser(Config.userRepoMySql)
 
     do {
         print("> ")
