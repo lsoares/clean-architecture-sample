@@ -16,24 +16,18 @@ fun main() {
 
     do {
         print("> ")
-        val input = readLine()?.first()?.toUpperCase() ?: '?'
+        val input = readLine()?.firstOrNull()?.toUpperCase() ?: '?'
         when (input) {
-            'R' -> createUser(
-                User(
-                    email = EmailAddress("random+${nextInt().absoluteValue}@email.com"),
-                    name = "randomUser ${nextInt()}",
-                    password = nextLong().toString()
-                )
-            )
-            'I' -> createUser(
-                User(
-                    email = EmailAddress("invalid email"),
-                    name = "randomUser ${nextInt()}",
-                    password = nextLong().toString()
-                )
-            )
+            'R' -> createUser(generateRandomUser())
+            'I' -> createUser(generateRandomUser().copy(email = EmailAddress("invalid")))
             'L' -> listUsers().forEach(::println)
             else -> println("please type R, I, L or Q")
         }
     } while (input != 'Q')
 }
+
+private fun generateRandomUser() = User(
+    email = EmailAddress("random+${nextInt().absoluteValue}@email.com"),
+    name = "randomUser ${nextInt().absoluteValue}",
+    password = nextLong().absoluteValue.toString()
+)
