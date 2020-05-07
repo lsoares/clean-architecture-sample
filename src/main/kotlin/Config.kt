@@ -7,7 +7,7 @@ object Config {
         Database.connect(url = System.getenv("MYSQL_URL"), driver = "com.mysql.cj.jdbc.Driver")
     }
     val userRepoMySql by lazy {
-        MySqlUserRepository(database).apply { createSchema() }
+        MySqlUserRepository(database).apply { updateSchema() }
     }
     val userRepoMongoDb by lazy {
         MongoDBUserRepository(

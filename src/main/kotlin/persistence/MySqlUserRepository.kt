@@ -31,7 +31,7 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
         transaction(database) {
             try {
                 UserSchema.insert {
-                    it[id] = user.id!!
+                    it[id] = user.id ?: error("I need an id")
                     it[email] = user.email.value
                     it[name] = user.name
                     it[hashedPassword] = user.hashedPassword!!
@@ -48,7 +48,7 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
         transaction(database) { UserSchema.deleteAll() }
     }
 
-    fun createSchema() {
+    fun updateSchema() {
         transaction(database) {
             SchemaUtils.createMissingTablesAndColumns(UserSchema)
         }
