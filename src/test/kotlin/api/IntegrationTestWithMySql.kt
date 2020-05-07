@@ -1,4 +1,4 @@
-package web
+package api
 
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
