@@ -17,16 +17,3 @@ object Config {
         )
     }
 }
-
-/*
-    MYSQL_URL=jdbc:mysql://root:my-secret-pw@localhost:3306/clean_demo
-    docker stop mysql_demo && docker rm mysql_demo
-    docker run --name mysql_demo -e MYSQL_ROOT_PASSWORD=my-secret-pw -e MYSQL_DATABASE=clean_demo -p 3306:3306 -d mysql
- */
-
-/*
-    MONGODB_HOST=localhost
-    MONGODB_PORT=27017
-    docker stop mongodb_demo && docker rm mongodb_demo
-    docker run --rm --name mongodb_demo -p 27017:27017 mongo
-*/

@@ -1,4 +1,4 @@
-package web
+package api
 
 import de.flapdoodle.embed.mongo.MongodExecutable
 import de.flapdoodle.embed.mongo.MongodProcess

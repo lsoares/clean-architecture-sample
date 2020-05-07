@@ -1,4 +1,4 @@
-package web
+package api
 
 import domain.User
 import io.javalin.http.Context
