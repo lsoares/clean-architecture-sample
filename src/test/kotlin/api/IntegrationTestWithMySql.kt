@@ -29,7 +29,7 @@ class IntegrationTestWithMySql {
                 url = "jdbc:mysql://user:pass@localhost:3301/test_schema",
                 driver = "com.mysql.cj.jdbc.Driver"
             )
-        ).also { it.createSchema() }
+        ).also { it.updateSchema() }
         webApp = WebApp(userRepository, 8081).also { it.start() }
     }
 

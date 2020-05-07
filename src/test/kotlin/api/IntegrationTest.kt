@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import org.eclipse.jetty.http.HttpStatus
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.skyscreamer.jsonassert.JSONAssert
 import java.net.URI
@@ -40,7 +41,6 @@ object IntegrationTest {
             userList.body(),
             true
         )
-        unmockkObject(IdGenerator)
     }
 
     fun `it does not create a repeated user when posting twice`() {
@@ -62,13 +62,18 @@ object IntegrationTest {
     }
 
     fun `it deletes a user after creation`() {
-        val creationRequest = newBuilder()
-            .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"} """))
-            .uri(URI("http://localhost:8081/users")).build()
-        val creation1Response = httpClient.send(creationRequest, discarding())
-        assertEquals(HttpStatus.CREATED_201, creation1Response.statusCode())
-        val usersBefore = httpClient.send(newBuilder().GET().uri(URI("http://localhost:8081/users")).build(), ofString())
-        JSONAssert.assertNotEquals("[]", usersBefore.body(), true)
+        mockkObject(IdGenerator)
+        every { IdGenerator.generate() } returns "1" andThen "2"
+        httpClient.send(
+            newBuilder()
+                .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"} """))
+                .uri(URI("http://localhost:8081/users")).build(), discarding()
+        )
+        httpClient.send(
+            newBuilder()
+                .POST(ofString(""" { "email": "miguel.s@gmail.com", "name": "Miguel Soares", "password": "f47!3#$5g%"} """))
+                .uri(URI("http://localhost:8081/users")).build(), discarding()
+        )
 
         val deleteResponse = httpClient.send(
             newBuilder().DELETE().uri(URI("http://localhost:8081/users/luis.s@gmail.com")).build(),
@@ -77,6 +82,15 @@ object IntegrationTest {
 
         assertEquals(HttpStatus.NO_CONTENT_204, deleteResponse.statusCode())
         val usersAfter = httpClient.send(newBuilder().GET().uri(URI("http://localhost:8081/users")).build(), ofString())
-        JSONAssert.assertEquals("[]", usersAfter.body(), true)
+        JSONAssert.assertEquals(
+            """ [ { "id": "2", "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
+            usersAfter.body(),
+            true
+        )
+    }
+
+    @AfterEach
+    fun `after each`() {
+        unmockkObject(IdGenerator)
     }
 }
