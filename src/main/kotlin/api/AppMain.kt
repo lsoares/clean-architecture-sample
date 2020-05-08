@@ -8,10 +8,12 @@ import usecases.CreateUser
 import usecases.ListUsers
 
 fun main() {
-    WebApp(
-        userRepository = Config.userRepoMySql,
-        port = System.getenv("PORT")?.toInt() ?: 8080
-    ).use(WebApp::start)
+    with(Config) {
+        WebApp(
+            userRepository = userRepoMySql,
+            port = port
+        ).use(WebApp::start)
+    }
 }
 
 class WebApp(userRepository: UserRepository, private val port: Int) : AutoCloseable {
