@@ -3,6 +3,7 @@ import persistence.MongoDBUserRepository
 import persistence.MySqlUserRepository
 
 object Config {
+    val port = System.getenv("PORT")?.toInt() ?: 8080
     private val database by lazy {
         Database.connect(url = System.getenv("MYSQL_URL"), driver = "com.mysql.cj.jdbc.Driver")
     }
