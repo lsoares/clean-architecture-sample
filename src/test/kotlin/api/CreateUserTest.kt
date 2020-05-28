@@ -1,6 +1,6 @@
 package api
 
-import domain.EmailAddress
+import domain.Email
 import domain.User
 import io.javalin.Javalin
 import io.mockk.*
@@ -42,7 +42,7 @@ class CreateUserTest {
             createUser(
                 User(
                     userCapture.captured.id,
-                    email = EmailAddress("luis.s@gmail.com"),
+                    email = Email("luis.s@gmail.com"),
                     name = "Luís",
                     password = "password"
                 )

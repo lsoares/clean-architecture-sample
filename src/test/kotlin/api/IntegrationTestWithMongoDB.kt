@@ -9,7 +9,7 @@ import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
 import domain.UserRepository
 import org.junit.jupiter.api.*
-import persistence.MongoDBUserRepository
+import adapters.persistence.MongoDBUserRepository
 
 class IntegrationTestWithMongoDB {
 

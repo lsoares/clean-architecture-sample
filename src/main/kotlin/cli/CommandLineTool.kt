@@ -1,6 +1,6 @@
 package cli
 
-import domain.EmailAddress
+import domain.Email
 import domain.User
 import usecases.CreateUser
 import usecases.ListUsers
@@ -13,22 +13,26 @@ fun main() {
     val listUsers = ListUsers(Config.userRepoMongoDb)
     val createUser = CreateUser(Config.userRepoMongoDb)
 
-    while (true) {
-        print("> ")
-        runCatching {
-            when (readLine()?.firstOrNull()?.toUpperCase() ?: '?') {
-                'R' -> createUser(generateRandomUser())
-                'I' -> createUser(generateRandomUser().copy(email = EmailAddress("invalid")))
-                'L' -> listUsers().forEach(::println)
-                'Q' -> exitProcess(0)
-                else -> println("please type R, I, L or Q")
-            }
-        }.onFailure(System.err::println)
-    }
+    repl(createUser, listUsers)
+}
+
+private tailrec fun repl(createUser: CreateUser, listUsers: ListUsers) {
+    print("> ")
+    runCatching {
+        when (readLine()?.firstOrNull()?.toUpperCase() ?: '?') {
+            'R' -> createUser(generateRandomUser())
+            'I' -> createUser(generateRandomUser().copy(email = Email("invalid")))
+            'L' -> listUsers().forEach(::println)
+            'Q' -> exitProcess(0)
+            else -> println("please type R, I, L or Q")
+        }
+    }.onFailure(::println)
+
+    repl(createUser, listUsers)
 }
 
 private fun generateRandomUser() = User(
-    email = EmailAddress("random+${nextInt().absoluteValue}@email.com"),
+    email = Email("random+${nextInt().absoluteValue}@email.com"),
     name = "randomUser ${nextInt().absoluteValue}",
     password = nextLong().absoluteValue.toString()
 )

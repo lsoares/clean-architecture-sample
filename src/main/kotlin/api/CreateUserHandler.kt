@@ -1,6 +1,6 @@
 package api
 
-import domain.EmailAddress
+import domain.Email
 import domain.User
 import io.javalin.http.Context
 import io.javalin.http.Handler
@@ -19,6 +19,6 @@ class CreateUserHandler(private val createUser: CreateUser) : Handler {
     }
 
     private class UserRepresenter(val email: String, val name: String, val password: String) {
-        fun toUser() = User(email = EmailAddress(email), name = name, password = password)
+        fun toUser() = User(email = Email(email), name = name, password = password)
     }
 }
