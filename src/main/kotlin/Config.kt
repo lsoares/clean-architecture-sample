@@ -1,6 +1,6 @@
 import org.jetbrains.exposed.sql.Database
-import persistence.MongoDBUserRepository
-import persistence.MySqlUserRepository
+import adapters.persistence.MongoDBUserRepository
+import adapters.persistence.MySqlUserRepository
 
 object Config {
     val port = System.getenv("PORT")?.toInt() ?: 8080

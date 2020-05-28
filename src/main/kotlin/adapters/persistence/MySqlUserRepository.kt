@@ -1,6 +1,6 @@
-package persistence
+package adapters.persistence
 
-import domain.EmailAddress
+import domain.Email
 import domain.User
 import domain.UserRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -20,7 +20,7 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
         UserSchema.selectAll().map {
             User(
                 id = it[UserSchema.id],
-                email = EmailAddress(it[UserSchema.email]),
+                email = Email(it[UserSchema.email]),
                 name = it[UserSchema.name],
                 hashedPassword = it[UserSchema.hashedPassword]
             )

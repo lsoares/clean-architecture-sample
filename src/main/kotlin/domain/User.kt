@@ -7,7 +7,7 @@ import javax.validation.constraints.Size
 
 data class User(
     var id: String? = null,
-    val email: EmailAddress,
+    val email: Email,
     @field:Size(min = 2) val name: String,
     @field:Size(min = 5) val password: String? = null,
     var hashedPassword: String? = null

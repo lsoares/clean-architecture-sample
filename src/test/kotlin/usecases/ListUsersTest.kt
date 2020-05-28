@@ -1,6 +1,6 @@
 package usecases
 
-import domain.EmailAddress
+import domain.Email
 import domain.User
 import domain.UserRepository
 import io.mockk.every
@@ -19,7 +19,7 @@ class ListUsersTest {
             every { findAll() } returns listOf(
                 User(
                     id = "abc1",
-                    email = EmailAddress("email@test.com"),
+                    email = Email("email@test.com"),
                     name = "Luís Soares",
                     hashedPassword = "hashed"
                 )
@@ -34,7 +34,7 @@ class ListUsersTest {
             listOf(
                 User(
                     id = "abc1",
-                    email = EmailAddress("email@test.com"),
+                    email = Email("email@test.com"),
                     name = "Luís Soares",
                     hashedPassword = "hashed"
                 )

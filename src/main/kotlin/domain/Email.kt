@@ -3,7 +3,7 @@ package domain
 import javax.validation.Validation
 import javax.validation.constraints.Email
 
-data class EmailAddress(@field:Email val value: String) {
+data class Email(@field:Email val value: String) {
 
     private val validator = Validation.buildDefaultValidatorFactory().validator
 
@@ -15,3 +15,5 @@ data class EmailAddress(@field:Email val value: String) {
 
     class InvalidEmail : Exception()
 }
+
+fun String.toEmail() = domain.Email(this)

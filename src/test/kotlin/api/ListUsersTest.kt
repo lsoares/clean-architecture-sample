@@ -1,6 +1,6 @@
 package api
 
-import domain.EmailAddress
+import domain.Email
 import domain.User
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
@@ -36,7 +36,7 @@ class ListUsersTest {
         every { listUsers() } returns listOf(
             User(
                 id = "xyz",
-                email = EmailAddress("email@test.com"),
+                email = Email("email@test.com"),
                 name = "Luís",
                 hashedPassword = "hashed"
             )
