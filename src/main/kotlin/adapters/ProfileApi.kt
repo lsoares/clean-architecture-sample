@@ -6,6 +6,8 @@ import domain.toEmail
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest
+import java.net.http.HttpRequest.BodyPublishers.ofString
+import java.net.http.HttpResponse.BodyHandlers.discarding
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
 class ProfileApi(private val apiUrl: String) {
@@ -31,4 +33,18 @@ class ProfileApi(private val apiUrl: String) {
                 email = it.get("email").asText().toEmail()
             )
         }
+
+    fun saveProfile(profile: Profile) {
+        val httpRequest = HttpRequest.newBuilder()
+            .uri(URI.create("$apiUrl/profile"))
+            .header("Content-type", "application/json")
+            .POST(ofString(objectMapper.writeValueAsString(profile.toProfileRepresenter())))
+
+        val response = newHttpClient.send(httpRequest.build(), discarding())
+        check(response.statusCode() == 201) { "status is not 200 OK" }
+    }
+
+    private fun Profile.toProfileRepresenter() = mapOf(
+        "email" to email.value, "id" to id
+    )
 }
