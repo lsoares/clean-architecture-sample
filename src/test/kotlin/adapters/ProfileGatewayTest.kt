@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert
 
-class ProfileApiTest {
+class ProfileGatewayTest {
 
     private lateinit var fakeProfile: Javalin
 
@@ -24,9 +24,9 @@ class ProfileApiTest {
             it.result(""" {"id": "abc", "email": "x123@gmail.com"} """)
                 .contentType("application/json")
         }.start(1234)
-        val profileApi = ProfileApi(apiUrl = "http://localhost:1234")
+        val profileGateway = ProfileGateway(apiUrl = "http://localhost:1234")
 
-        val result = profileApi.fetchProfile("abc")
+        val result = profileGateway.fetchProfile("abc")
 
         assertEquals(Profile(id = "abc", email = "x123@gmail.com".toEmail()), result)
     }
@@ -40,9 +40,9 @@ class ProfileApiTest {
             contentType = it.contentType()
             it.status(201)
         }.start(1234)
-        val profileApi = ProfileApi(apiUrl = "http://localhost:1234")
+        val profileGateway = ProfileGateway(apiUrl = "http://localhost:1234")
 
-        profileApi.saveProfile(Profile(id = "abc", email = "x123@gmail.com".toEmail()))
+        profileGateway.saveProfile(Profile(id = "abc", email = "x123@gmail.com".toEmail()))
 
         JSONAssert.assertEquals(
             """ { "id": "abc", "email": "x123@gmail.com"}  """,
