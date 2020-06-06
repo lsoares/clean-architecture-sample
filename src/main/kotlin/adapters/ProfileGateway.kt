@@ -10,7 +10,7 @@ import java.net.http.HttpRequest.BodyPublishers.ofString
 import java.net.http.HttpResponse.BodyHandlers.discarding
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
-class ProfileApi(private val apiUrl: String) {
+class ProfileGateway(private val apiUrl: String) {
 
     private val objectMapper = ObjectMapper()
     private val newHttpClient = newHttpClient()
