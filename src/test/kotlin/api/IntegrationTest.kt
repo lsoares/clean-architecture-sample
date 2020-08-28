@@ -1,6 +1,6 @@
 package api
 
-import domain.IdGenerator
+import domain.model.IdGenerator
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject

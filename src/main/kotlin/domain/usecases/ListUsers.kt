@@ -1,6 +1,6 @@
-package usecases
+package domain.usecases
 
-import domain.UserRepository
+import domain.ports.UserRepository
 
 class ListUsers(private val userRepo: UserRepository) {
 

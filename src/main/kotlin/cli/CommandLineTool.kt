@@ -1,19 +1,16 @@
 package cli
 
-import domain.Email
-import domain.User
-import usecases.CreateUser
-import usecases.ListUsers
+import domain.model.Email
+import domain.model.User
+import domain.usecases.CreateUser
+import domain.usecases.ListUsers
 import kotlin.math.absoluteValue
 import kotlin.random.Random.Default.nextInt
 import kotlin.random.Random.Default.nextLong
 import kotlin.system.exitProcess
 
 fun main() {
-    val listUsers = ListUsers(Config.userRepoMongoDb)
-    val createUser = CreateUser(Config.userRepoMongoDb)
-
-    repl(createUser, listUsers)
+    repl(Config.createUser, Config.listUsers)
 }
 
 private tailrec fun repl(createUser: CreateUser, listUsers: ListUsers) {

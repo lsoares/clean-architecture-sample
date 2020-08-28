@@ -1,7 +1,7 @@
-package domain
+package domain.model
 
+import domain.ports.UserRepository
 import java.util.*
-import javax.validation.ConstraintViolation
 import javax.validation.Validation
 import javax.validation.constraints.Size
 
@@ -20,13 +20,10 @@ data class User(
         password?.let {
             hashedPassword = PasswordEncoder.encode(password)
             validator.validate(this).run {
-                require(isEmpty()) { throw InvalidUser(this) }
+                require(isEmpty()) { throw UserRepository.InvalidUser(this) }
             }
         }
     }
-
-    class InvalidUser(private val violations: MutableSet<ConstraintViolation<User>>) : Exception()
-    class UserAlreadyExists : Exception()
 }
 
 object PasswordEncoder {

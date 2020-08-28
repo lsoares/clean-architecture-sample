@@ -1,4 +1,4 @@
-package domain
+package domain.model
 
 import javax.validation.Validation
 import javax.validation.constraints.Email
@@ -16,4 +16,4 @@ data class Email(@field:Email val value: String) {
     class InvalidEmail : Exception()
 }
 
-fun String.toEmail() = domain.Email(this)
+fun String.toEmail() = domain.model.Email(this)

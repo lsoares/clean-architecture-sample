@@ -7,9 +7,11 @@ import de.flapdoodle.embed.mongo.config.MongodConfigBuilder
 import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
-import domain.UserRepository
+import domain.ports.UserRepository
 import org.junit.jupiter.api.*
 import adapters.persistence.MongoDBUserRepository
+import domain.usecases.CreateUser
+import domain.usecases.ListUsers
 
 class IntegrationTestWithMongoDB {
 
@@ -28,7 +30,7 @@ class IntegrationTestWithMongoDB {
         )
         mongod = mongodExe.start()
         userRepository = MongoDBUserRepository("localhost", 12345, "db123").apply { createSchema() }
-        webApp = WebApp(userRepository, 8081).apply { start() }
+        webApp = WebApp(ListUsers(userRepository), CreateUser(userRepository), 8081)()
     }
 
     @BeforeEach

@@ -1,33 +1,38 @@
 package api
 
 import Config
-import domain.UserRepository
+import domain.usecases.CreateUser
+import domain.usecases.ListUsers
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
-import usecases.CreateUser
-import usecases.ListUsers
 
 fun main() {
     with(Config) {
         WebApp(
-            userRepository = userRepoMySql,
+            listUsers = listUsers,
+            createUser = createUser,
             port = port
-        ).use(WebApp::start)
+        ).use { it() }
     }
 }
 
-class WebApp(userRepository: UserRepository, private val port: Int) : AutoCloseable {
+class WebApp(
+    private val listUsers: ListUsers,
+    private val createUser: CreateUser,
+    private val port: Int
+) : AutoCloseable {
 
     private var javalinApp: Javalin = Javalin.create().routes {
         get { it.result("check health") }
         path("users") {
-            get(ListUsersHandler(ListUsers(userRepository)))
-            post(CreateUserHandler(CreateUser(userRepository)))
+            get(ListUsersHandler(listUsers))
+            post(CreateUserHandler(createUser))
         }
     }
 
-    fun start() {
+    operator fun invoke(): WebApp {
         javalinApp.start(port)
+        return this
     }
 
     override fun close() {

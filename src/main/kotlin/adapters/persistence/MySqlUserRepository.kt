@@ -1,8 +1,8 @@
 package adapters.persistence
 
-import domain.Email
-import domain.User
-import domain.UserRepository
+import domain.model.Email
+import domain.model.User
+import domain.ports.UserRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -38,7 +38,7 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
                 }
             } catch (ex: ExposedSQLException) {
                 if (ex.message != null && ex.message!!.contains("users_email_unique")) {
-                    throw User.UserAlreadyExists()
+                    throw UserRepository.UserAlreadyExists()
                 } else throw ex
             }
         }

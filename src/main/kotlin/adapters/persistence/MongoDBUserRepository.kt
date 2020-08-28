@@ -2,9 +2,9 @@ package adapters.persistence
 
 import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
-import domain.Email
-import domain.User
-import domain.UserRepository
+import domain.model.Email
+import domain.model.User
+import domain.ports.UserRepository
 import org.bson.Document
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.getCollection
@@ -44,7 +44,7 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
                 )
             )
         } catch (ex: MongoWriteException) {
-            throw if (ex.message!!.contains("email_1 dup key")) User.UserAlreadyExists() else ex
+            throw if (ex.message!!.contains("email_1 dup key")) UserRepository.UserAlreadyExists() else ex
         }
     }
 

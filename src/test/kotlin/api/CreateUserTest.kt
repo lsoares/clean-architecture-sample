@@ -1,13 +1,14 @@
 package api
 
-import domain.Email
-import domain.User
+import domain.model.Email
+import domain.model.User
+import domain.ports.UserRepository
 import io.javalin.Javalin
 import io.mockk.*
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import usecases.CreateUser
+import domain.usecases.CreateUser
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.BodyPublishers.ofString
@@ -53,7 +54,7 @@ class CreateUserTest {
 
     @Test
     fun `it replies with 409 when posting an existing user`() {
-        every { createUser(any()) } throws User.UserAlreadyExists()
+        every { createUser(any()) } throws UserRepository.UserAlreadyExists()
         val jsonBody = """{ "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"}"""
 
         val response = httpClient.send(

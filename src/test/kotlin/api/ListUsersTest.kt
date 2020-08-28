@@ -1,7 +1,7 @@
 package api
 
-import domain.Email
-import domain.User
+import domain.model.Email
+import domain.model.User
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -11,7 +11,7 @@ import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.skyscreamer.jsonassert.JSONAssert
-import usecases.ListUsers
+import domain.usecases.ListUsers
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.newBuilder

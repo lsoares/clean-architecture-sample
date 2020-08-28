@@ -1,9 +1,9 @@
 package api
 
-import domain.User
+import domain.model.User
 import io.javalin.http.Context
 import io.javalin.http.Handler
-import usecases.ListUsers
+import domain.usecases.ListUsers
 
 class ListUsersHandler(private val listUsers: ListUsers) : Handler {
 

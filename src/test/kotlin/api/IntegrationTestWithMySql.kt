@@ -1,16 +1,18 @@
 package api
 
+import adapters.persistence.MySqlUserRepository
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
-import domain.UserRepository
+import domain.ports.UserRepository
+import domain.usecases.CreateUser
+import domain.usecases.ListUsers
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import adapters.persistence.MySqlUserRepository
 
 class IntegrationTestWithMySql {
 
@@ -30,7 +32,7 @@ class IntegrationTestWithMySql {
                 driver = "com.mysql.cj.jdbc.Driver"
             )
         ).also { it.updateSchema() }
-        webApp = WebApp(userRepository, 8081).also { it.start() }
+        webApp = WebApp(ListUsers(userRepository), CreateUser(userRepository), 8081)()
     }
 
     @BeforeEach

@@ -1,7 +1,7 @@
 package adapters
 
-import domain.Profile
-import domain.toEmail
+import domain.model.Profile
+import domain.model.toEmail
 import io.javalin.Javalin
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

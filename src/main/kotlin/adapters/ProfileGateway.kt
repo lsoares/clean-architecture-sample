@@ -1,8 +1,8 @@
 package adapters
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import domain.Profile
-import domain.toEmail
+import domain.model.Profile
+import domain.model.toEmail
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest

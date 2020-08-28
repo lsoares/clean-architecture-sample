@@ -1,8 +1,8 @@
-package usecases
+package domain.usecases
 
-import domain.Email
-import domain.User
-import domain.UserRepository
+import domain.model.Email
+import domain.model.User
+import domain.ports.UserRepository
 import io.mockk.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
