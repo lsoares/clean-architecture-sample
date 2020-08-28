@@ -1,4 +1,4 @@
-package domain
+package domain.model
 
 import domain.model.Email
 import org.junit.jupiter.api.Assertions.assertEquals

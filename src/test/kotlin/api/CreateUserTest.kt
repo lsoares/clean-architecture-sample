@@ -2,6 +2,7 @@ package api
 
 import domain.model.Email
 import domain.model.User
+import domain.model.toPassword
 import domain.ports.UserRepository
 import io.javalin.Javalin
 import io.mockk.*
@@ -55,7 +56,7 @@ class CreateUserTest {
                     userCapture.captured.id,
                     email = Email("luis.s@gmail.com"),
                     name = "Luís",
-                    password = "password"
+                    password = "password".toPassword()
                 )
             )
         }

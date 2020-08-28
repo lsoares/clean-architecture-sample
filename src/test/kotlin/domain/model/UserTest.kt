@@ -1,7 +1,5 @@
-package domain
+package domain.model
 
-import domain.model.Email
-import domain.model.User
 import domain.model.User.InvalidUser
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -12,17 +10,14 @@ class UserTest {
     @Test
     fun `creates a user`() {
         assertDoesNotThrow {
-            User(email = Email("l@a.b"), password = "12345", name = "Luís")
+            User(email = Email("l@a.b"), password = "12345".toPassword(), name = "Luís")
         }
     }
 
     @Test
     fun `throws validation exception`() {
         assertThrows<InvalidUser> {
-            User(email = Email("l@a.b"), password = "1", name = "Luís")
-        }
-        assertThrows<InvalidUser> {
-            User(email = Email("l@a.b"), password = "12345", name = "L")
+            User(email = Email("l@a.b"), password = "12345".toPassword(), name = "L")
         }
     }
 }

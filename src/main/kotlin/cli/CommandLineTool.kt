@@ -2,6 +2,7 @@ package cli
 
 import domain.model.Email
 import domain.model.User
+import domain.model.toPassword
 import domain.usecases.CreateUser
 import domain.usecases.ListUsers
 import kotlin.math.absoluteValue
@@ -31,7 +32,7 @@ private tailrec fun repl(createUser: CreateUser, listUsers: ListUsers) {
 private fun generateRandomUser() = User(
     email = Email("random+${nextInt().absoluteValue}@email.com"),
     name = "randomUser ${nextInt().absoluteValue}",
-    password = nextLong().absoluteValue.toString()
+    password = nextLong().absoluteValue.toString().toPassword()
 )
 
 /*

@@ -3,6 +3,7 @@ package adapters.persistence
 import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
 import domain.model.Email
+import domain.model.Password
 import domain.model.User
 import domain.ports.UserRepository
 import org.bson.Document
@@ -30,7 +31,7 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
 
     override fun findAll() =
         usersColection.find().toList().map {
-            User(id = it.id, email = Email(it.email), name = it.name, hashedPassword = it.hashedPassword)
+            User(id = it.id, email = Email(it.email), name = it.name, password = Password(it.hashedPassword))
         }
 
     override fun save(user: User) {
@@ -40,7 +41,7 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
                     id = user.id!!,
                     email = user.email.value,
                     name = user.name,
-                    hashedPassword = user.hashedPassword!!
+                    hashedPassword = user.password?.hashed
                 )
             )
         } catch (ex: MongoWriteException) {

@@ -2,6 +2,7 @@ package api
 
 import domain.model.Email
 import domain.model.User
+import domain.model.toPassword
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -48,7 +49,7 @@ class ListUsersTest {
                 id = "xyz",
                 email = Email("email@test.com"),
                 name = "Luís",
-                hashedPassword = "hashed"
+                password = "hashed".toPassword()
             )
         )
 

@@ -2,6 +2,7 @@ package api
 
 import domain.model.Email
 import domain.model.User
+import domain.model.toPassword
 import domain.ports.UserRepository
 import io.javalin.http.Context
 import io.javalin.http.Handler
@@ -20,6 +21,6 @@ class CreateUserHandler(private val createUser: CreateUser) : Handler {
     }
 
     private class UserRepresenter(val email: String, val name: String, val password: String) {
-        fun toUser() = User(email = Email(email), name = name, password = password)
+        fun toUser() = User(email = Email(email), name = name, password = password.toPassword())
     }
 }
