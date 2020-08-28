@@ -1,5 +1,6 @@
 package domain
 
+import java.time.LocalDate
 import java.util.*
 import javax.validation.ConstraintViolation
 import javax.validation.Validation
@@ -10,7 +11,8 @@ data class User(
     val email: Email,
     @field:Size(min = 2) val name: String,
     @field:Size(min = 5) val password: String? = null,
-    var hashedPassword: String? = null
+    var hashedPassword: String? = null,
+    val validUntil: LocalDate = LocalDate.now(),
 ) {
     private val validator = Validation.buildDefaultValidatorFactory().validator
 

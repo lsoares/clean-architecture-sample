@@ -1,17 +1,19 @@
 package cli
 
+import Config.userRepoMongoDb
 import domain.Email
 import domain.User
-import usecases.CreateUser
-import usecases.ListUsers
+import domain.UserPresenter
+import domain.UserRepository
+import usecases.*
 import kotlin.math.absoluteValue
 import kotlin.random.Random.Default.nextInt
 import kotlin.random.Random.Default.nextLong
 import kotlin.system.exitProcess
 
 fun main() {
-    val listUsers = ListUsers(Config.userRepoMongoDb)
-    val createUser = CreateUser(Config.userRepoMongoDb)
+    val listUsers = ListUsers(userRepoMongoDb)
+    val createUser = CreateUser(userRepoMongoDb)
 
     repl(createUser, listUsers)
 }
@@ -23,6 +25,17 @@ private tailrec fun repl(createUser: CreateUser, listUsers: ListUsers) {
             'R' -> createUser(generateRandomUser())
             'I' -> createUser(generateRandomUser().copy(email = Email("invalid")))
             'L' -> listUsers().forEach(::println)
+
+            // New UC: extend users
+            'A' -> ExtendUsersDI(userRepoMongoDb)()
+            'B' -> ExtendUsersIS(userRepoMongoDb)()
+
+            // Revisit UC: list users
+            // [DI]<--|... FCIS
+            'M' -> ListUsers2(userRepoMongoDb, printlnPresenter)()
+            //  DI ...|--> FC[IS]
+            'N' -> listUsersIS()
+
             'Q' -> exitProcess(0)
             else -> println("please type R, I, L or Q")
         }
@@ -30,6 +43,19 @@ private tailrec fun repl(createUser: CreateUser, listUsers: ListUsers) {
 
     repl(createUser, listUsers)
 }
+
+// UC: list users
+// [DI]<--|... FCIS
+private val printlnPresenter = object : UserPresenter {
+    override fun show(users: List<User>) = users.forEach(::println)
+}
+
+// UC: list users
+//  DI ...|--> FC[IS]
+private fun listUsersIS() = userRepoMongoDb.findAll().forEach(::println)
+private fun listUsersIS(repo: UserRepository, presenter: UserPresenter) = presenter.show(repo.findAll())
+
+/////
 
 private fun generateRandomUser() = User(
     email = Email("random+${nextInt().absoluteValue}@email.com"),
@@ -49,3 +75,6 @@ private fun generateRandomUser() = User(
     docker stop mongodb_demo && docker rm mongodb_demo
     docker run --rm --name mongodb_demo -p 27017:27017 mongo
 */
+
+/////
+
