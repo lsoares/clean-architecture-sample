@@ -1,8 +1,6 @@
 package domain.usecases
 
-import domain.model.Email
-import domain.model.User
-import domain.model.toPassword
+import domain.model.*
 import domain.ports.UserRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -19,10 +17,10 @@ class ListUsersTest {
         val repository = mockk<UserRepository> {
             every { findAll() } returns listOf(
                 User(
-                    id = "abc1",
-                    email = Email("email@test.com"),
+                    id = "abc1".toUserId(),
+                    email = "email@test.com".toEmail(),
                     name = "Luís Soares",
-                    password = "pass".toPassword()
+                    password = "password".toPassword()
                 )
             )
         }
@@ -34,10 +32,10 @@ class ListUsersTest {
         assertEquals(
             listOf(
                 User(
-                    id = "abc1",
-                    email = Email("email@test.com"),
+                    id = "abc1".toUserId(),
+                    email = "email@test.com".toEmail(),
                     name = "Luís Soares",
-                    password = "pass".toPassword()
+                    password = "password".toPassword()
                 )
             ),
             users

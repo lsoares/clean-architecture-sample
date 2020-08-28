@@ -1,7 +1,8 @@
 package cli
 
-import domain.model.Email
+import Config
 import domain.model.User
+import domain.model.toEmail
 import domain.model.toPassword
 import domain.usecases.CreateUser
 import domain.usecases.ListUsers
@@ -19,7 +20,7 @@ private tailrec fun repl(createUser: CreateUser, listUsers: ListUsers) {
     runCatching {
         when (readLine()?.firstOrNull()?.toUpperCase() ?: '?') {
             'R' -> createUser(generateRandomUser())
-            'I' -> createUser(generateRandomUser().copy(email = Email("invalid")))
+            'I' -> createUser(generateRandomUser().copy(email = "invalid".toEmail()))
             'L' -> listUsers().forEach(::println)
             'Q' -> exitProcess(0)
             else -> println("please type R, I, L or Q")
@@ -30,7 +31,7 @@ private tailrec fun repl(createUser: CreateUser, listUsers: ListUsers) {
 }
 
 private fun generateRandomUser() = User(
-    email = Email("random+${nextInt().absoluteValue}@email.com"),
+    email = "random+${nextInt().absoluteValue}@email.com".toEmail(),
     name = "randomUser ${nextInt().absoluteValue}",
     password = nextLong().absoluteValue.toString().toPassword()
 )

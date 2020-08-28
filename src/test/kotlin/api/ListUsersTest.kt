@@ -1,8 +1,10 @@
 package api
 
-import domain.model.Email
 import domain.model.User
+import domain.model.toEmail
 import domain.model.toPassword
+import domain.model.toUserId
+import domain.usecases.ListUsers
 import io.javalin.Javalin
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -12,7 +14,6 @@ import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.skyscreamer.jsonassert.JSONAssert
-import domain.usecases.ListUsers
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.newBuilder
@@ -46,8 +47,8 @@ class ListUsersTest {
     fun `it converts a list of users to json`() {
         every { listUsers() } returns listOf(
             User(
-                id = "xyz",
-                email = Email("email@test.com"),
+                id = "xyz".toUserId(),
+                email = "email@test.com".toEmail(),
                 name = "Luís",
                 password = "hashed".toPassword()
             )

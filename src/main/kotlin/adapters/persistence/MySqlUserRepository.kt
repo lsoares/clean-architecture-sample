@@ -1,8 +1,6 @@
 package adapters.persistence
 
-import domain.model.Email
-import domain.model.Password
-import domain.model.User
+import domain.model.*
 import domain.ports.UserRepository
 import domain.ports.UserRepository.UserAlreadyExists
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -21,8 +19,8 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
     override fun findAll() = transaction(database) {
         UserSchema.selectAll().map {
             User(
-                id = it[UserSchema.id],
-                email = Email(it[UserSchema.email]),
+                id = it[UserSchema.id].toUserId(),
+                email = it[UserSchema.email].toEmail(),
                 name = it[UserSchema.name],
                 password = Password(it[UserSchema.hashedPassword])
             )
@@ -33,7 +31,7 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
         transaction(database) {
             try {
                 UserSchema.insert {
-                    it[id] = user.id ?: error("I need an id")
+                    it[id] = user.id?.value ?: error("I need an id")
                     it[email] = user.email.value
                     it[name] = user.name
                     it[hashedPassword] = user.password.hashed

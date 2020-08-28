@@ -2,9 +2,10 @@ package adapters.persistence
 
 import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
-import domain.model.Email
 import domain.model.Password
 import domain.model.User
+import domain.model.toEmail
+import domain.model.toUserId
 import domain.ports.UserRepository
 import org.bson.Document
 import org.litote.kmongo.KMongo
@@ -31,17 +32,22 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
 
     override fun findAll() =
         usersColection.find().toList().map {
-            User(id = it.id, email = Email(it.email), name = it.name, password = Password(it.hashedPassword))
+            User(
+                id = it.id.toUserId(),
+                email = it.email.toEmail(),
+                name = it.name,
+                password = Password(it.hashedPassword)
+            )
         }
 
     override fun save(user: User) {
         try {
             usersColection.save(
                 UserSchema(
-                    id = user.id!!,
+                    id = user.id?.value ?: error("missing user id"),
                     email = user.email.value,
                     name = user.name,
-                    hashedPassword = user.password?.hashed
+                    hashedPassword = user.password.hashed
                 )
             )
         } catch (ex: MongoWriteException) {

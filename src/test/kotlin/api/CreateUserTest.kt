@@ -1,15 +1,15 @@
 package api
 
-import domain.model.Email
 import domain.model.User
+import domain.model.toEmail
 import domain.model.toPassword
 import domain.ports.UserRepository
+import domain.usecases.CreateUser
 import io.javalin.Javalin
 import io.mockk.*
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import domain.usecases.CreateUser
 import java.net.URI
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest.BodyPublishers.ofString
@@ -54,7 +54,7 @@ class CreateUserTest {
             createUser(
                 User(
                     userCapture.captured.id,
-                    email = Email("luis.s@gmail.com"),
+                    email = "luis.s@gmail.com".toEmail(),
                     name = "Luís",
                     password = "password".toPassword()
                 )
