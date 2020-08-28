@@ -24,11 +24,21 @@ class ListUsersTest {
     private lateinit var listUsers: ListUsers
 
     @BeforeAll
+    @Suppress("unused")
     fun setup() {
         listUsers = mockk()
         server = Javalin.create()
             .get("/", ListUsersHandler(listUsers))
             .start(1234)
+    }
+
+    @AfterEach
+    fun `after each`() = clearAllMocks()
+
+    @AfterAll
+    @Suppress("unused")
+    fun `tear down`() {
+        server.stop()
     }
 
     @Test
@@ -53,13 +63,5 @@ class ListUsersTest {
             response.body(),
             true
         )
-    }
-
-    @AfterEach
-    fun `after each`() = clearAllMocks()
-
-    @AfterAll
-    fun `tear down`() {
-        server.stop()
     }
 }

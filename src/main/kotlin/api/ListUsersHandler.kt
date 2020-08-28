@@ -14,5 +14,6 @@ class ListUsersHandler(private val listUsers: ListUsers) : Handler {
     private fun List<User>.toRepresenter() =
         map { UserRepresenter(it.id, it.email.value, it.name) }
 
+    @Suppress("unused")
     private class UserRepresenter(val id: String?, val email: String, val name: String)
 }

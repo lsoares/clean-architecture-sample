@@ -19,7 +19,7 @@ object IntegrationTest {
 
     private val httpClient = newHttpClient()
 
-    fun `it creates two users when posting two different requests`() {
+    fun `create two users when posting two different requests`() {
         mockkObject(IdGenerator)
         every { IdGenerator.generate() } returns "1" andThen "2"
         httpClient.send(
@@ -43,7 +43,7 @@ object IntegrationTest {
         )
     }
 
-    fun `it does not create a repeated user when posting twice`() {
+    fun `do not create a repeated user when posting twice`() {
         val creationRequest = newBuilder()
             .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"} """))
             .uri(URI("http://localhost:8081/users")).build()
@@ -61,7 +61,7 @@ object IntegrationTest {
         )
     }
 
-    fun `it deletes a user after creation`() {
+    fun `delete a user after creation`() {
         mockkObject(IdGenerator)
         every { IdGenerator.generate() } returns "1" andThen "2"
         httpClient.send(

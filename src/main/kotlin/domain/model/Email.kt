@@ -1,19 +1,24 @@
 package domain.model
 
-import javax.validation.Validation
-import javax.validation.constraints.Email
+import java.util.regex.Pattern
 
-data class Email(@field:Email val value: String) {
+data class Email(val value: String) {
 
-    private val validator = Validation.buildDefaultValidatorFactory().validator
+    private val emailAddressPattern = Pattern.compile(
+        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                "\\@" +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                "(" +
+                "\\." +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                ")+"
+    )
 
     init {
-        validator.validate(this).apply {
-            require(isEmpty()) { throw InvalidEmail() }
-        }
+       require(emailAddressPattern.matcher(value).matches()) { throw InvalidEmail() }
     }
 
     class InvalidEmail : Exception()
 }
 
-fun String.toEmail() = domain.model.Email(this)
+fun String.toEmail() = Email(this)

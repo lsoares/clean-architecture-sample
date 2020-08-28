@@ -21,6 +21,7 @@ class IntegrationTestWithMySql {
     private lateinit var userRepository: UserRepository
 
     @BeforeAll
+    @Suppress("unused")
     fun setup() {
         val config = aMysqldConfig(Version.v5_7_latest)
             .withPort(3301)
@@ -40,19 +41,20 @@ class IntegrationTestWithMySql {
         (userRepository as MySqlUserRepository).deleteAll()
     }
 
+    @AfterAll
+    @Suppress("unused")
+    fun `tear down`() {
+        webApp.close()
+        dbServer.stop()
+    }
+
     @Test
     fun `it creates a user when posting a user json`() {
-        IntegrationTest.`it creates two users when posting two different requests`()
+        IntegrationTest.`create two users when posting two different requests`()
     }
 
     @Test
     fun `it does not create a repeated user when posting twice`() {
-        IntegrationTest.`it does not create a repeated user when posting twice`()
-    }
-
-    @AfterAll
-    fun `tear down`() {
-        webApp.close()
-        dbServer.stop()
+        IntegrationTest.`do not create a repeated user when posting twice`()
     }
 }

@@ -1,29 +1,27 @@
 package domain.model
 
-import domain.ports.UserRepository
 import java.util.*
-import javax.validation.Validation
-import javax.validation.constraints.Size
 
 data class User(
     var id: String? = null,
     val email: Email,
-    @field:Size(min = 2) val name: String,
-    @field:Size(min = 5) val password: String? = null,
+    val name: String,
+    val password: String? = null,
     var hashedPassword: String? = null
 ) {
-    private val validator = Validation.buildDefaultValidatorFactory().validator
 
     init {
         if (id == null) id = IdGenerator.generate()
 
+        require(name.length >= 2) { throw InvalidUser() }
+        require(password == null || password.length >= 5) { throw InvalidUser() }
+
         password?.let {
             hashedPassword = PasswordEncoder.encode(password)
-            validator.validate(this).run {
-                require(isEmpty()) { throw UserRepository.InvalidUser(this) }
-            }
         }
     }
+
+    class InvalidUser : Exception()
 }
 
 object PasswordEncoder {

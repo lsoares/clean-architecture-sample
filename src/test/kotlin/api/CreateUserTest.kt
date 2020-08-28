@@ -23,14 +23,24 @@ class CreateUserTest {
     private lateinit var server: Javalin
 
     @BeforeAll
+    @Suppress("unused")
     fun setup() {
         server = Javalin.create()
             .post("/", CreateUserHandler(createUser))
             .start(1234)
     }
 
+    @AfterEach
+    fun `after each`() = clearAllMocks()
+
+    @Suppress("unused")
+    @AfterAll
+    fun `after all`() {
+        server.stop()
+    }
+
     @Test
-    fun `it creates a user when posting its json`() {
+    fun `create a user when posting its json`() {
         val userCapture = slot<User>()
         every { createUser(capture(userCapture)) } just Runs
         val request = newBuilder()
@@ -53,7 +63,7 @@ class CreateUserTest {
     }
 
     @Test
-    fun `it replies with 409 when posting an existing user`() {
+    fun `reply with 409 when posting an existing user`() {
         every { createUser(any()) } throws UserRepository.UserAlreadyExists()
         val jsonBody = """{ "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"}"""
 
@@ -63,13 +73,5 @@ class CreateUserTest {
 
         verify(exactly = 1) { createUser(any()) }
         assertEquals(HttpStatus.CONFLICT_409, response.statusCode())
-    }
-
-    @AfterEach
-    fun `after each`() = clearAllMocks()
-
-    @AfterAll
-    fun `after all`() {
-        server.stop()
     }
 }

@@ -1,7 +1,6 @@
 import org.jetbrains.exposed.sql.Database
 import adapters.persistence.MongoDBUserRepository
 import adapters.persistence.MySqlUserRepository
-import api.ListUsersHandler
 import domain.usecases.CreateUser
 import domain.usecases.ListUsers
 

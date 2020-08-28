@@ -21,6 +21,7 @@ class IntegrationTestWithMongoDB {
     private lateinit var userRepository: UserRepository
 
     @BeforeAll
+    @Suppress("unused")
     fun setup() {
         mongodExe = MongodStarter.getDefaultInstance().prepare(
             MongodConfigBuilder()
@@ -38,26 +39,28 @@ class IntegrationTestWithMongoDB {
         (userRepository as MongoDBUserRepository).deleteAll()
     }
 
-    @Test
-    fun `it creates two users when posting two different requests`() {
-        IntegrationTest.`it creates two users when posting two different requests`()
-    }
-
-    @Test
-    fun `it does not create a repeated user when posting twice`() {
-        IntegrationTest.`it does not create a repeated user when posting twice`()
-    }
-
-    @Disabled("please fix me")
-    @Test
-    fun `it deletes a user after creation`() {
-        IntegrationTest.`it deletes a user after creation`()
-    }
-
     @AfterAll
+    @Suppress("unused")
     fun `after all`() {
         webApp.close()
         mongod.stop()
         mongodExe.stop()
+    }
+
+    @Test
+    fun `create two users when posting two different requests`() {
+        IntegrationTest.`create two users when posting two different requests`()
+    }
+
+    @Test
+    fun `do not create a repeated user when posting twice`() {
+        IntegrationTest.`do not create a repeated user when posting twice`()
+    }
+
+    @Disabled("please fix me")
+    // TODO
+    @Test
+    fun `delete a user after creation`() {
+        IntegrationTest.`delete a user after creation`()
     }
 }
