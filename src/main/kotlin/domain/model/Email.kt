@@ -15,7 +15,7 @@ data class Email(val value: String) {
     )
 
     init {
-       require(emailAddressPattern.matcher(value).matches()) { throw InvalidEmail() }
+        require(emailAddressPattern.matcher(value).matches()) { throw InvalidEmail() }
     }
 
     class InvalidEmail : Exception()

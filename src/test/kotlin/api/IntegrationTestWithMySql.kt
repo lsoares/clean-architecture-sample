@@ -49,12 +49,12 @@ class IntegrationTestWithMySql {
     }
 
     @Test
-    fun `it creates a user when posting a user json`() {
+    fun `create a user when posting a user json`() {
         IntegrationTest.`create two users when posting two different requests`()
     }
 
     @Test
-    fun `it does not create a repeated user when posting twice`() {
+    fun `do not create a repeated user when posting twice`() {
         IntegrationTest.`do not create a repeated user when posting twice`()
     }
 }

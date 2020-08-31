@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.4.0"
 }
@@ -12,12 +10,6 @@ repositories {
     jcenter()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
 dependencies {
     implementation(kotlin("stdlib"))
 
@@ -26,7 +18,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.+")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.+")
 
-    implementation("org.jetbrains.exposed:exposed:0.17.+")
+    implementation("org.jetbrains.exposed:exposed:0.+")
     implementation("mysql:mysql-connector-java:8.+")
     implementation("org.litote.kmongo:kmongo:3.+")
 
@@ -38,7 +30,12 @@ dependencies {
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.+")
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform {
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform {}
 }

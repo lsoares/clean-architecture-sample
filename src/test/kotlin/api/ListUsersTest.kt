@@ -58,7 +58,6 @@ class ListUsersTest {
             newBuilder().GET().uri(URI("http://localhost:1234")).build(), ofString()
         )
 
-        verify(exactly = 1) { listUsers() }
         assertEquals(HttpStatus.OK_200, response.statusCode())
         JSONAssert.assertEquals(
             """ [ { "id": "xyz", "name": "Luís", "email": "email@test.com" } ] """,

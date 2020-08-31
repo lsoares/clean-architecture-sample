@@ -4,6 +4,7 @@ import domain.model.User
 import domain.model.toEmail
 import domain.model.toPassword
 import domain.ports.UserRepository
+import domain.ports.UserRepository.UserAlreadyExists
 import domain.usecases.CreateUser
 import io.javalin.Javalin
 import io.mockk.*
@@ -65,14 +66,13 @@ class CreateUserTest {
 
     @Test
     fun `reply with 409 when posting an existing user`() {
-        every { createUser(any()) } throws UserRepository.UserAlreadyExists()
+        every { createUser(any()) } throws UserAlreadyExists()
         val jsonBody = """{ "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"}"""
 
         val response = httpClient.send(
             newBuilder().POST(ofString(jsonBody)).uri(URI("http://localhost:1234")).build(), ofString()
         )
 
-        verify(exactly = 1) { createUser(any()) }
         assertEquals(HttpStatus.CONFLICT_409, response.statusCode())
     }
 }

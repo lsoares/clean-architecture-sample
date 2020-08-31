@@ -23,7 +23,7 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
         var id: String,
         val email: String,
         val name: String,
-        var hashedPassword: String
+        var hashedPassword: String,
     )
 
     fun createSchema() {

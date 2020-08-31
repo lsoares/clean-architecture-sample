@@ -20,10 +20,10 @@ class ProfileGateway(private val apiUrl: String) {
             .uri(URI.create("$apiUrl/profile/$id"))
             .GET()
 
-        val response = newHttpClient.send(httpRequest.build(), ofString())
-        check(response.statusCode() == 200) { "status is not 200 OK" }
-
-        return response.body().toProfile()
+        return newHttpClient.send(httpRequest.build(), ofString()).run {
+            check(statusCode() == 200)
+            body().toProfile()
+        }
     }
 
     private fun String.toProfile() =
@@ -45,6 +45,7 @@ class ProfileGateway(private val apiUrl: String) {
     }
 
     private fun Profile.toProfileRepresenter() = mapOf(
-        "email" to email.value, "id" to id
+        "email" to email.value,
+        "id" to id,
     )
 }
