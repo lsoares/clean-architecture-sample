@@ -1,4 +1,3 @@
-import org.jetbrains.exposed.sql.Database
 import adapters.persistence.MongoDBUserRepository
 import domain.usecases.CreateUser
 import domain.usecases.ListUsers
@@ -9,9 +8,9 @@ object Config {
     val listUsers by lazy { ListUsers(repo) }
     val createUser by lazy { CreateUser(repo) }
 
-    private val database by lazy {
-        Database.connect(url = System.getenv("MYSQL_URL"), driver = "com.mysql.cj.jdbc.Driver")
-    }
+    //private val database by lazy {
+    //    Database.connect(url = System.getenv("MYSQL_URL"), driver = "com.mysql.cj.jdbc.Driver")
+    //}
     //private val userRepoMySql by lazy {
     //    MySqlUserRepository(database).apply { updateSchema() }
     //}

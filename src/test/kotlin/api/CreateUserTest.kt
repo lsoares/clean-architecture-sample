@@ -3,7 +3,6 @@ package api
 import domain.model.User
 import domain.model.toEmail
 import domain.model.toPassword
-import domain.ports.UserRepository
 import domain.ports.UserRepository.UserAlreadyExists
 import domain.usecases.CreateUser
 import io.javalin.Javalin

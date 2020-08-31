@@ -3,15 +3,13 @@ package domain.model
 import java.util.*
 
 data class User(
-    var id: UserId? = null,
+    var id: UserId = IdGenerator.generate().toUserId(),
     val email: Email,
     val name: String,
     val password: Password
 ) {
-
     init {
         require(name.length >= 2) { throw InvalidUser() }
-        if (id == null) id = IdGenerator.generate().toUserId()
     }
 
     class InvalidUser : Exception()

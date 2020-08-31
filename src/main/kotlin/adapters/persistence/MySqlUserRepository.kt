@@ -1,11 +1,15 @@
 package adapters.persistence
 
-import domain.model.*
+import domain.model.Password
+import domain.model.User
+import domain.model.toEmail
+import domain.model.toUserId
 import domain.ports.UserRepository
 import domain.ports.UserRepository.UserAlreadyExists
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.sql.SQLIntegrityConstraintViolationException
 
 class MySqlUserRepository(private val database: Database) : UserRepository {
 
@@ -31,15 +35,17 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
         transaction(database) {
             try {
                 UserSchema.insert {
-                    it[id] = user.id?.value ?: error("I need an id")
+                    it[id] = user.id.value
                     it[email] = user.email.value
                     it[name] = user.name
                     it[hashedPassword] = user.password.hashed
                 }
             } catch (ex: ExposedSQLException) {
-                if (ex.message != null && ex.message!!.contains("users_email_unique")) {
-                    throw UserAlreadyExists()
-                } else throw ex
+                ex.cause
+                    ?.takeIf { it is SQLIntegrityConstraintViolationException }
+                    ?.takeIf { it.message?.contains("users_email_unique") == true }
+                    ?.let { throw UserAlreadyExists() }
+                throw ex
             }
         }
     }

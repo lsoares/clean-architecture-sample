@@ -44,7 +44,7 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
         try {
             usersColection.save(
                 UserSchema(
-                    id = user.id?.value ?: error("missing user id"),
+                    id = user.id.value,
                     email = user.email.value,
                     name = user.name,
                     hashedPassword = user.password.hashed
