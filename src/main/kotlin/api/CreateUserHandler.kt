@@ -13,9 +13,6 @@ class CreateUserHandler(private val createUser: CreateUser) : Handler {
 
     override fun handle(ctx: Context) {
         try {
-            println(ctx.body())
-            println(ctx.body<UserRepresenter>())
-            println(ctx.body<UserRepresenter>().toUser())
             createUser(ctx.body<UserRepresenter>().toUser())
             ctx.status(HttpStatus.CREATED_201)
         } catch (ex: UserAlreadyExists) {
