@@ -14,6 +14,7 @@ class ExtendUsersDITests {
     fun `extend validity of expired users until tomorrow`() {
         val expiredUser = exampleUser.copy(validUntil = yesterday)
         val arg = slot<User>()
+        // Note: We could say we’re tying ourselves to implementation details here
         val repository = mockk<UserRepository> {
             every { findAll() } returns listOf(expiredUser)
             justRun { save(capture(arg)) }
@@ -28,6 +29,7 @@ class ExtendUsersDITests {
     fun `skip and ignore valid users`() {
         val validUser = exampleUser.copy(name = "valid", validUntil = nextWeek)
         val expiredUser = exampleUser.copy(name = "expired", validUntil = yesterday)
+        // Note: We could say we’re tying ourselves to implementation details here
         val repository = mockk<UserRepository> {
             every { findAll() } returns listOf(validUser, expiredUser)
             justRun { save(any()) }

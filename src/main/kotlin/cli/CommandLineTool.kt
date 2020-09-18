@@ -55,7 +55,7 @@ private val printlnPresenter = object : UserPresenter {
 private fun listUsersIS() = userRepoMongoDb.findAll().forEach(::println)
 private fun listUsersIS(repo: UserRepository, presenter: UserPresenter) = presenter.show(repo.findAll())
 
-/////
+//////////////////////////////
 
 private fun generateRandomUser() = User(
     email = Email("random+${nextInt().absoluteValue}@email.com"),
@@ -75,6 +75,3 @@ private fun generateRandomUser() = User(
     docker stop mongodb_demo && docker rm mongodb_demo
     docker run --rm --name mongodb_demo -p 27017:27017 mongo
 */
-
-/////
-

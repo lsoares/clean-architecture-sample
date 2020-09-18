@@ -38,9 +38,10 @@ class ExtendUsersFCTests {
 class ExtendUsersISTests {
 
     @Test
-    fun `repository is queried and users are saved`() { // HF: Happy path!
+    fun `repository is queried and users are saved`() {
         val expiredUser = exampleUser.copy(name = "expired", validUntil = yesterday)
         val extendedUser = expiredUser.copy(name = "extended", validUntil = tomorrow)
+        // Note: Still tied to implementation details but with much fewer paths to test!
         val repository = mockk<UserRepository>(relaxed = true) {
             every { findAll() } returns listOf(expiredUser)
             justRun { save(extendedUser) }
