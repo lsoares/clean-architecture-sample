@@ -7,9 +7,9 @@ import java.time.LocalDate.now
 import java.time.Month.JANUARY
 
 /**
- * See for more info:
+ * See for more info on FCIS:
  * - 34 min talk: https://www.destroyallsoftware.com/talks/boundaries
- * - 10 min blog: http://www.javiercasas.com/articles/functional-programming-patterns-functional-core-imperative-shell
+ * - 5 min summary: https://marsbased.com/blog/2020/01/20/functional-core-imperative-shell/
  */
 
 // Functional Core
