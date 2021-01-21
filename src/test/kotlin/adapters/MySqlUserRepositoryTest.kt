@@ -9,12 +9,9 @@ import domain.model.toPassword
 import domain.model.toUserId
 import domain.ports.UserRepository
 import org.jetbrains.exposed.sql.Database
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 
 class MySqlUserRepositoryTest {
 
@@ -34,6 +31,12 @@ class MySqlUserRepositoryTest {
                 driver = "com.mysql.cj.jdbc.Driver"
             )
         ).also { it.updateSchema() }
+    }
+
+    @AfterAll
+    @Suppress("unused")
+    fun `tear down`() {
+        dbServer.stop()
     }
 
     @BeforeEach
