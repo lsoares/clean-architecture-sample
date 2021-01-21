@@ -15,7 +15,7 @@ fun main() {
         ).use { it() }
     }
 }
-
+// TODO: pass any config
 class WebApp(
     private val listUsers: ListUsers,
     private val createUser: CreateUser,

@@ -1,6 +1,8 @@
 package api
 
 import adapters.persistence.MySqlUserRepository
+import api.HttpDsl.`create user`
+import api.HttpDsl.`list users`
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
@@ -8,11 +10,14 @@ import com.wix.mysql.distribution.Version
 import domain.ports.UserRepository
 import domain.usecases.CreateUser
 import domain.usecases.ListUsers
+import org.eclipse.jetty.http.HttpStatus
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.skyscreamer.jsonassert.JSONAssert
 
 class IntegrationTestWithMySql {
 
@@ -50,11 +55,30 @@ class IntegrationTestWithMySql {
 
     @Test
     fun `create a user when posting a user json`() {
-        IntegrationTest.`create two users when posting two different requests`()
+        `create user`("luis.s@gmail.com", "Luís Soares", "password")
+        `create user`("miguel.s@gmail.com", "Miguel Soares", "f47!3#$5g%")
+
+        val userList = `list users`()
+
+        JSONAssert.assertEquals(
+            """ [ { "name": "Luís Soares", "email": "luis.s@gmail.com" },
+                            { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
+            userList.body(),
+            false
+        )
     }
 
     @Test
     fun `do not create a repeated user when posting twice`() {
-        IntegrationTest.`do not create a repeated user when posting twice`()
+        val creation1Response = `create user`("luis.1@gmail.com", "Luís Soares", "password")
+        val creation2Response = `create user`("luis.1@gmail.com", "Luís Soares", "password")
+        val listResponse = `list users`()
+
+        assertEquals(HttpStatus.CREATED_201, creation1Response.statusCode())
+        assertEquals(HttpStatus.CONFLICT_409, creation2Response.statusCode())
+        JSONAssert.assertEquals(
+            """ [ { "name": "Luís Soares", "email": "luis.1@gmail.com" }] """,
+            listResponse.body(), false
+        )
     }
 }
