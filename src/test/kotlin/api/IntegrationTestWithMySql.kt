@@ -2,6 +2,7 @@ package api
 
 import adapters.persistence.MySqlUserRepository
 import api.HttpDsl.`create user`
+import api.HttpDsl.`delete user`
 import api.HttpDsl.`list users`
 import com.wix.mysql.EmbeddedMysql
 import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
@@ -9,6 +10,7 @@ import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
 import domain.ports.UserRepository
 import domain.usecases.CreateUser
+import domain.usecases.DeleteUser
 import domain.usecases.ListUsers
 import org.eclipse.jetty.http.HttpStatus
 import org.jetbrains.exposed.sql.Database
@@ -38,7 +40,12 @@ class IntegrationTestWithMySql {
                 driver = "com.mysql.cj.jdbc.Driver"
             )
         ).also { it.updateSchema() }
-        webApp = WebApp(ListUsers(userRepository), CreateUser(userRepository), 8081)()
+        webApp = WebApp(
+            ListUsers(userRepository),
+            CreateUser(userRepository),
+            DeleteUser(userRepository),
+            8081,
+        )()
     }
 
     @BeforeEach
@@ -72,6 +79,7 @@ class IntegrationTestWithMySql {
     fun `do not create a repeated user when posting twice`() {
         val creation1Response = `create user`("luis.1@gmail.com", "Luís Soares", "password")
         val creation2Response = `create user`("luis.1@gmail.com", "Luís Soares", "password")
+
         val listResponse = `list users`()
 
         assertEquals(HttpStatus.CREATED_201, creation1Response.statusCode())
@@ -79,6 +87,22 @@ class IntegrationTestWithMySql {
         JSONAssert.assertEquals(
             """ [ { "name": "Luís Soares", "email": "luis.1@gmail.com" }] """,
             listResponse.body(), false
+        )
+    }
+
+    @Test
+    fun `delete a user after creation`() {
+        `create user`("luis.s@gmail.com", "Luís Soares", "password")
+        `create user`("miguel.s@gmail.com", "Miguel Soares", "f47!3#\$5g%")
+
+        val deleteResponse = `delete user`("luis.s@gmail.com")
+
+        assertEquals(HttpStatus.NO_CONTENT_204, deleteResponse.statusCode())
+        val usersAfter = `list users`()
+        JSONAssert.assertEquals(
+            """ [ { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
+            usersAfter.body(),
+            false
         )
     }
 }

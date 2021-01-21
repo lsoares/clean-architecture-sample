@@ -1,5 +1,6 @@
 import adapters.persistence.MongoDBUserRepository
 import domain.usecases.CreateUser
+import domain.usecases.DeleteUser
 import domain.usecases.ListUsers
 
 object Config {
@@ -7,6 +8,7 @@ object Config {
 
     val listUsers by lazy { ListUsers(repo) }
     val createUser by lazy { CreateUser(repo) }
+    val deleteUser by lazy { DeleteUser(repo) }
 
     //private val database by lazy {
     //    Database.connect(url = System.getenv("MYSQL_URL"), driver = "com.mysql.cj.jdbc.Driver")

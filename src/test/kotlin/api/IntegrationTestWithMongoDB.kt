@@ -1,5 +1,9 @@
 package api
 
+import adapters.persistence.MongoDBUserRepository
+import api.HttpDsl.`create user`
+import api.HttpDsl.`delete user`
+import api.HttpDsl.`list users`
 import de.flapdoodle.embed.mongo.MongodExecutable
 import de.flapdoodle.embed.mongo.MongodProcess
 import de.flapdoodle.embed.mongo.MongodStarter
@@ -8,15 +12,15 @@ import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
 import domain.ports.UserRepository
-import org.junit.jupiter.api.*
-import adapters.persistence.MongoDBUserRepository
-import api.HttpDsl.`create user`
-import api.HttpDsl.`delete user`
-import api.HttpDsl.`list users`
 import domain.usecases.CreateUser
+import domain.usecases.DeleteUser
 import domain.usecases.ListUsers
 import org.eclipse.jetty.http.HttpStatus
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert
 
 class IntegrationTestWithMongoDB {
@@ -37,7 +41,12 @@ class IntegrationTestWithMongoDB {
         )
         mongod = mongodExe.start()
         userRepository = MongoDBUserRepository("localhost", 12345, "db123").apply { createSchema() }
-        webApp = WebApp(ListUsers(userRepository), CreateUser(userRepository), 8081)()
+        webApp = WebApp(
+            ListUsers(userRepository),
+            CreateUser(userRepository),
+            DeleteUser(userRepository),
+            8081,
+        )()
     }
 
     @BeforeEach
@@ -83,7 +92,6 @@ class IntegrationTestWithMongoDB {
         )
     }
 
-    @Disabled("please fix me")
     @Test
     fun `delete a user after creation`() {
         `create user`("luis.s@gmail.com", "Luís Soares", "password")

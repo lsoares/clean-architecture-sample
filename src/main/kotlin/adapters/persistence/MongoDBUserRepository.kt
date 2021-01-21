@@ -2,10 +2,7 @@ package adapters.persistence
 
 import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
-import domain.model.Password
-import domain.model.User
-import domain.model.toEmail
-import domain.model.toUserId
+import domain.model.*
 import domain.ports.UserRepository
 import org.bson.Document
 import org.litote.kmongo.KMongo
@@ -53,6 +50,10 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
         } catch (ex: MongoWriteException) {
             throw if (ex.message!!.contains("email_1 dup key")) UserRepository.UserAlreadyExists() else ex
         }
+    }
+
+    override fun delete(email: Email) {
+        usersColection.deleteOne(Document("email", email.value))
     }
 
     fun deleteAll() {

@@ -1,9 +1,6 @@
 package adapters.persistence
 
-import domain.model.Password
-import domain.model.User
-import domain.model.toEmail
-import domain.model.toUserId
+import domain.model.*
 import domain.ports.UserRepository
 import domain.ports.UserRepository.UserAlreadyExists
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -46,6 +43,14 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
                     ?.takeIf { it.message?.contains("users_email_unique") == true }
                     ?.let { throw UserAlreadyExists() }
                 throw ex
+            }
+        }
+    }
+
+    override fun delete(email: Email) {
+        transaction {
+            UserSchema.deleteWhere {
+                UserSchema.email eq email.value
             }
         }
     }

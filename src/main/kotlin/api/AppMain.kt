@@ -2,6 +2,7 @@ package api
 
 import Config
 import domain.usecases.CreateUser
+import domain.usecases.DeleteUser
 import domain.usecases.ListUsers
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
@@ -11,6 +12,7 @@ fun main() {
         WebApp(
             listUsers = listUsers,
             createUser = createUser,
+            deleteUser = deleteUser,
             port = port
         ).use { it() }
     }
@@ -19,6 +21,7 @@ fun main() {
 class WebApp(
     private val listUsers: ListUsers,
     private val createUser: CreateUser,
+    private val deleteUser: DeleteUser,
     private val port: Int
 ) : AutoCloseable {
 
@@ -27,6 +30,7 @@ class WebApp(
         path("users") {
             get(ListUsersHandler(listUsers))
             post(CreateUserHandler(createUser))
+            delete(":email", DeleteUserHandler(deleteUser))
         }
     }
 
