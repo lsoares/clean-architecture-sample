@@ -1,7 +1,7 @@
 package api
 
 import Config
-import adapters.persistence.MySqlUserRepository
+import adapters.MySqlUserRepository
 import api.HttpDsl.`create user`
 import api.HttpDsl.`delete user`
 import api.HttpDsl.`list users`
@@ -10,9 +10,6 @@ import com.wix.mysql.EmbeddedMysql.anEmbeddedMysql
 import com.wix.mysql.config.MysqldConfig.aMysqldConfig
 import com.wix.mysql.distribution.Version
 import domain.ports.UserRepository
-import domain.usecases.CreateUser
-import domain.usecases.DeleteUser
-import domain.usecases.ListUsers
 import org.eclipse.jetty.http.HttpStatus
 import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.AfterAll

@@ -1,4 +1,4 @@
-package adapters.persistence
+package adapters
 
 import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions

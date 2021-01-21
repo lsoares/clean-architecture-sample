@@ -1,4 +1,4 @@
-package adapters.persistence
+package adapters
 
 import domain.model.*
 import domain.ports.UserRepository

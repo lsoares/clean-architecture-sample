@@ -1,5 +1,5 @@
-import adapters.persistence.MongoDBUserRepository
-import adapters.persistence.MySqlUserRepository
+import adapters.MongoDBUserRepository
+import adapters.MySqlUserRepository
 import domain.ports.UserRepository
 import domain.usecases.CreateUser
 import domain.usecases.DeleteUser

@@ -1,7 +1,7 @@
 package api
 
 import Config
-import adapters.persistence.MongoDBUserRepository
+import adapters.MongoDBUserRepository
 import api.HttpDsl.`create user`
 import api.HttpDsl.`delete user`
 import api.HttpDsl.`list users`
