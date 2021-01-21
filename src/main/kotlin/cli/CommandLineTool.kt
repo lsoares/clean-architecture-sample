@@ -1,33 +1,32 @@
 package cli
 
 import Config
+import ConfigWithMongoDb
 import domain.model.User
 import domain.model.toEmail
 import domain.model.toPassword
-import domain.usecases.CreateUser
-import domain.usecases.ListUsers
 import kotlin.math.absoluteValue
 import kotlin.random.Random.Default.nextInt
 import kotlin.random.Random.Default.nextLong
 import kotlin.system.exitProcess
 
 fun main() {
-    repl(Config.createUser, Config.listUsers)
+    ConfigWithMongoDb.repl()
 }
 
-private tailrec fun repl(createUser: CreateUser, listUsers: ListUsers) {
+private tailrec fun Config.repl() {
     print("> ")
     runCatching {
         when (readLine()?.firstOrNull()?.toUpperCase() ?: '?') {
-            'R' -> createUser(generateRandomUser())
-            'I' -> createUser(generateRandomUser().copy(email = "invalid".toEmail()))
-            'L' -> listUsers().forEach(::println)
+            'R' -> this@repl.createUser(generateRandomUser())
+            'I' -> this@repl.createUser(generateRandomUser().copy(email = "invalid".toEmail()))
+            'L' -> this@repl.listUsers().forEach(::println)
             'Q' -> exitProcess(0)
             else -> println("please type R, I, L or Q")
         }
     }.onFailure(::println)
 
-    repl(createUser, listUsers)
+    repl()
 }
 
 private fun generateRandomUser() = User(

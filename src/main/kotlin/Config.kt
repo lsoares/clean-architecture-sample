@@ -1,28 +1,33 @@
 import adapters.persistence.MongoDBUserRepository
+import adapters.persistence.MySqlUserRepository
+import domain.ports.UserRepository
 import domain.usecases.CreateUser
 import domain.usecases.DeleteUser
 import domain.usecases.ListUsers
+import org.jetbrains.exposed.sql.Database
 
-object Config {
-    val port = System.getenv("PORT")?.toInt() ?: 8080
+abstract class Config {
+    open val listUsers by lazy { ListUsers(repo) }
+    open val createUser by lazy { CreateUser(repo) }
+    open val deleteUser by lazy { DeleteUser(repo) }
+    abstract val repo: UserRepository
+}
 
-    val listUsers by lazy { ListUsers(repo) }
-    val createUser by lazy { CreateUser(repo) }
-    val deleteUser by lazy { DeleteUser(repo) }
-
-    //private val database by lazy {
-    //    Database.connect(url = System.getenv("MYSQL_URL"), driver = "com.mysql.cj.jdbc.Driver")
-    //}
-    //private val userRepoMySql by lazy {
-    //    MySqlUserRepository(database).apply { updateSchema() }
-    //}
-    private val userRepoMongoDb by lazy {
+object ConfigWithMongoDb : Config() {
+    override val repo by lazy {
         MongoDBUserRepository(
             System.getenv("MONGODB_HOST"),
             System.getenv("MONGODB_PORT").toInt(),
             "clean_demo"
         )
     }
-
-    private val repo by lazy { userRepoMongoDb }
 }
+
+object ConfigWithMySql : Config() {
+    override val repo by lazy {
+        MySqlUserRepository(
+            Database.connect(url = System.getenv("MYSQL_URL"), driver = "com.mysql.cj.jdbc.Driver")
+        ).also(MySqlUserRepository::updateSchema)
+    }
+}
+

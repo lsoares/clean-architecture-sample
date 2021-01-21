@@ -1,5 +1,6 @@
 package api
 
+import Config
 import adapters.persistence.MySqlUserRepository
 import api.HttpDsl.`create user`
 import api.HttpDsl.`delete user`
@@ -40,12 +41,9 @@ class IntegrationTestWithMySql {
                 driver = "com.mysql.cj.jdbc.Driver"
             )
         ).also { it.updateSchema() }
-        webApp = WebApp(
-            ListUsers(userRepository),
-            CreateUser(userRepository),
-            DeleteUser(userRepository),
-            8081,
-        )()
+        webApp = WebApp(object : Config() {
+            override val repo get() = userRepository
+        }, 8081).start()
     }
 
     @BeforeEach
