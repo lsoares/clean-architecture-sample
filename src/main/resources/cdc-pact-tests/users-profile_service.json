@@ -1,0 +1,32 @@
+{
+  "provider": {
+    "name": "profile_service"
+  },
+  "consumer": {
+    "name": "users"
+  },
+  "interactions": [
+    {
+      "description": "can fetch a user profile",
+      "request": {
+        "method": "GET",
+        "path": "/profile/abc"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "id": "abc",
+          "email": "abc@email.com"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "4.0.10"
+    }
+  }
+}

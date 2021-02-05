@@ -28,6 +28,8 @@ dependencies {
 
     testImplementation("com.wix:wix-embedded-mysql:4.+")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.+")
+
+    testImplementation("au.com.dius:pact-jvm-consumer-junit5:4.+")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -37,5 +39,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform {}
+    useJUnitPlatform()
+    systemProperty("pact.rootDir", "src/main/resources/cdc-pact-tests")
 }
