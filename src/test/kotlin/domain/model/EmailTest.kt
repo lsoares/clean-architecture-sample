@@ -14,8 +14,6 @@ class EmailTest {
 
     @Test
     fun `throws validation exception`() {
-        assertThrows<Email.InvalidEmail> {
-            "lsoares".toEmail()
-        }
+        assertThrows<Email.InvalidEmail>("lsoares"::toEmail)
     }
 }

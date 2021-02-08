@@ -4,6 +4,8 @@ import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
 import domain.model.*
 import domain.ports.UserRepository
+import domain.ports.UserRepository.SaveResult.NewUser
+import domain.ports.UserRepository.SaveResult.UserAlreadyExists
 import org.bson.Document
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.getCollection
@@ -37,19 +39,19 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
             )
         }
 
-    override fun save(user: User) {
-        try {
-            usersColection.save(
-                UserSchema(
-                    id = user.id.value,
-                    email = user.email.value,
-                    name = user.name,
-                    hashedPassword = user.password.hashed
-                )
+    override fun save(user: User) = try {
+        usersColection.save(
+            UserSchema(
+                id = user.id.value,
+                email = user.email.value,
+                name = user.name,
+                hashedPassword = user.password.hashed
             )
-        } catch (ex: MongoWriteException) {
-            throw if (ex.message!!.contains("email_1 dup key")) UserRepository.UserAlreadyExists() else ex
-        }
+        )
+        NewUser
+    } catch (ex: MongoWriteException) {
+        if (ex.message!!.contains("email_1 dup key")) UserAlreadyExists
+        else throw ex
     }
 
     override fun delete(email: Email) {

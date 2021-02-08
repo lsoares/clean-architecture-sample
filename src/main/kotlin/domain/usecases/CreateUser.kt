@@ -5,7 +5,5 @@ import domain.ports.UserRepository
 
 class CreateUser(private val userRepo: UserRepository) {
 
-    operator fun invoke(user: User) {
-        userRepo.save(user)
-    }
+    operator fun invoke(user: User) = userRepo.save(user)
 }

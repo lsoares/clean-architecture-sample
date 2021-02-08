@@ -3,7 +3,8 @@ package api
 import domain.model.User
 import domain.model.toEmail
 import domain.model.toPassword
-import domain.ports.UserRepository.UserAlreadyExists
+import domain.ports.UserRepository.SaveResult.NewUser
+import domain.ports.UserRepository.SaveResult.UserAlreadyExists
 import domain.usecases.CreateUser
 import io.javalin.Javalin
 import io.mockk.*
@@ -43,7 +44,7 @@ class CreateUserTest {
     @Test
     fun `create a user when posting its json`() {
         val userCapture = slot<User>()
-        every { createUser(capture(userCapture)) } just Runs
+        every { createUser(capture(userCapture)) } returns NewUser
         val request = newBuilder()
             .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís", "password": "password"} """))
             .uri(URI("http://localhost:1234")).build()
@@ -65,7 +66,7 @@ class CreateUserTest {
 
     @Test
     fun `reply with 409 when posting an existing user`() {
-        every { createUser(any()) } throws UserAlreadyExists()
+        every { createUser(any()) } returns UserAlreadyExists
         val jsonBody = """{ "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"}"""
 
         val response = httpClient.send(

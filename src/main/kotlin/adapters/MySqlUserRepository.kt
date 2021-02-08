@@ -2,7 +2,8 @@ package adapters
 
 import domain.model.*
 import domain.ports.UserRepository
-import domain.ports.UserRepository.UserAlreadyExists
+import domain.ports.UserRepository.SaveResult.NewUser
+import domain.ports.UserRepository.SaveResult.UserAlreadyExists
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -28,22 +29,21 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
         }
     }
 
-    override fun save(user: User) {
-        transaction(database) {
-            try {
-                UserSchema.insert {
-                    it[id] = user.id.value
-                    it[email] = user.email.value
-                    it[name] = user.name
-                    it[hashedPassword] = user.password.hashed
-                }
-            } catch (ex: ExposedSQLException) {
-                ex.cause
-                    ?.takeIf { it is SQLIntegrityConstraintViolationException }
-                    ?.takeIf { it.message?.contains("users_email_unique") == true }
-                    ?.let { throw UserAlreadyExists() }
-                throw ex
+    override fun save(user: User) = transaction(database) {
+        try {
+            UserSchema.insert {
+                it[id] = user.id.value
+                it[email] = user.email.value
+                it[name] = user.name
+                it[hashedPassword] = user.password.hashed
             }
+            NewUser
+        } catch (ex: ExposedSQLException) {
+            ex.cause
+                ?.takeIf { it is SQLIntegrityConstraintViolationException }
+                ?.takeIf { it.message?.contains("users_email_unique") == true }
+                ?.let { UserAlreadyExists }
+                ?: throw ex
         }
     }
 

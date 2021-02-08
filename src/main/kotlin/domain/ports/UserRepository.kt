@@ -5,8 +5,11 @@ import domain.model.User
 
 interface UserRepository {
     fun findAll(): List<User>
-    fun save(user: User)
+    fun save(user: User): SaveResult
     fun delete(email: Email)
 
-    class UserAlreadyExists : Exception()
+    sealed class SaveResult {
+        object NewUser : SaveResult()
+        object UserAlreadyExists : SaveResult()
+    }
 }
