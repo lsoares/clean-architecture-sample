@@ -29,8 +29,8 @@ class ProfileGateway(private val apiUrl: String) {
     private fun String.toProfile() =
         objectMapper.readTree(this).let {
             Profile(
-                id = it.get("id").asText(),
-                email = it.get("email").asText().toEmail()
+                id = it.get("id").textValue(),
+                email = it.get("email").textValue().toEmail()
             )
         }
 

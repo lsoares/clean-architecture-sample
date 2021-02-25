@@ -13,14 +13,13 @@ import org.eclipse.jetty.http.HttpStatus
 class CreateUserHandler(private val createUser: CreateUser) : Handler {
 
     override fun handle(ctx: Context) {
-        createUser(ctx.body<UserRepresenter>().toUser()).let {
-            ctx.status(
-                when (it) {
-                    NewUser -> HttpStatus.CREATED_201
-                    UserAlreadyExists -> HttpStatus.CONFLICT_409
-                }
-            )
-        }
+        val create = createUser(ctx.body<UserRepresenter>().toUser())
+        ctx.status(
+            when (create) {
+                NewUser -> HttpStatus.CREATED_201
+                UserAlreadyExists -> HttpStatus.CONFLICT_409
+            }
+        )
     }
 
     private class UserRepresenter(val email: String, val name: String, val password: String) {
