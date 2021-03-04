@@ -5,6 +5,7 @@ import domain.usecases.CreateUser
 import domain.usecases.DeleteUser
 import domain.usecases.ListUsers
 import org.jetbrains.exposed.sql.Database
+import org.litote.kmongo.KMongo
 
 abstract class Config {
     open val listUsers by lazy { ListUsers(repo) }
@@ -16,9 +17,9 @@ abstract class Config {
 object ConfigWithMongoDb : Config() {
     override val repo by lazy {
         MongoDBUserRepository(
-            System.getenv("MONGODB_HOST"),
-            System.getenv("MONGODB_PORT").toInt(),
-            "clean_demo"
+            KMongo
+                .createClient(System.getenv("MONGODB_HOST"), System.getenv("MONGODB_PORT").toInt())
+                .getDatabase("clean_demo")
         )
     }
 }

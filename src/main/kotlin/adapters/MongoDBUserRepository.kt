@@ -1,25 +1,23 @@
 package adapters
 
 import com.mongodb.MongoWriteException
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.IndexOptions
 import domain.model.*
 import domain.ports.UserRepository
 import domain.ports.UserRepository.SaveResult.NewUser
 import domain.ports.UserRepository.SaveResult.UserAlreadyExists
 import org.bson.Document
-import org.litote.kmongo.KMongo
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.save
 
-class MongoDBUserRepository(host: String, port: Int, database: String) : UserRepository {
+class MongoDBUserRepository(database: MongoDatabase) : UserRepository {
 
-    private val usersColection = KMongo
-        .createClient(host, port)
-        .getDatabase(database)
-        .getCollection<UserSchema>("users")
-
-    init {
-        usersColection.createIndex(Document("email", 1), IndexOptions().unique(true))
+    private val usersCollection: MongoCollection<UserSchema> by lazy {
+        database.getCollection<UserSchema>("users").also {
+            it.createIndex(Document("email", 1), IndexOptions().unique(true))
+        }
     }
 
     private data class UserSchema(
@@ -30,7 +28,7 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
     )
 
     override fun findAll() =
-        usersColection.find().toList().map {
+        usersCollection.find().toList().map {
             User(
                 id = it.id.toUserId(),
                 email = it.email.toEmail(),
@@ -40,7 +38,7 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
         }
 
     override fun save(user: User) = try {
-        usersColection.save(
+        usersCollection.save(
             UserSchema(
                 id = user.id.value,
                 email = user.email.value,
@@ -55,6 +53,6 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
     }
 
     override fun delete(email: Email) {
-        usersColection.deleteOne(Document("email", email.value))
+        usersCollection.deleteOne(Document("email", email.value))
     }
 }

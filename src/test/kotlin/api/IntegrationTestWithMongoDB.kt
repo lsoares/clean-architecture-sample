@@ -29,6 +29,9 @@ class IntegrationTestWithMongoDB {
     private lateinit var mongodExe: MongodExecutable
     private lateinit var mongod: MongodProcess
     private lateinit var userRepository: UserRepository
+    private val database = KMongo
+        .createClient("localhost", 12345)
+        .getDatabase("db123")
 
     @BeforeAll
     @Suppress("unused")
@@ -40,7 +43,7 @@ class IntegrationTestWithMongoDB {
                 .build()
         )
         mongod = mongodExe.start()
-        userRepository = MongoDBUserRepository("localhost", 12345, "db123")
+        userRepository = MongoDBUserRepository(database)
         webApp = WebApp(object : Config() {
             override val repo get() = userRepository
         }, 8081).start()
@@ -48,10 +51,7 @@ class IntegrationTestWithMongoDB {
 
     @BeforeEach
     fun `before each`() {
-        KMongo
-            .createClient("localhost", 12345)
-            .getDatabase("db123")
-            .getCollection("users")
+        database.getCollection("users")
             .deleteMany(Document())
     }
 
