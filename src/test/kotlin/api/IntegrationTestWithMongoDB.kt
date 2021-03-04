@@ -13,12 +13,14 @@ import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
 import domain.ports.UserRepository
+import org.bson.Document
 import org.eclipse.jetty.http.HttpStatus
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.litote.kmongo.KMongo
 import org.skyscreamer.jsonassert.JSONAssert
 
 class IntegrationTestWithMongoDB {
@@ -38,7 +40,7 @@ class IntegrationTestWithMongoDB {
                 .build()
         )
         mongod = mongodExe.start()
-        userRepository = MongoDBUserRepository("localhost", 12345, "db123").apply { createSchema() }
+        userRepository = MongoDBUserRepository("localhost", 12345, "db123")
         webApp = WebApp(object : Config() {
             override val repo get() = userRepository
         }, 8081).start()
@@ -46,7 +48,11 @@ class IntegrationTestWithMongoDB {
 
     @BeforeEach
     fun `before each`() {
-        (userRepository as MongoDBUserRepository).deleteAll()
+        KMongo
+            .createClient("localhost", 12345)
+            .getDatabase("db123")
+            .getCollection("users")
+            .deleteMany(Document())
     }
 
     @AfterAll
@@ -74,16 +80,15 @@ class IntegrationTestWithMongoDB {
 
     @Test
     fun `do not create a repeated user when posting twice`() {
-        val creation1Response = `create user`("luis.1@gmail.com", "Luís Soares", "password")
+        `create user`("luis.1@gmail.com", "Luís Soares", "password")
+
         val creation2Response = `create user`("luis.1@gmail.com", "Luís Soares", "password")
 
-        val listResponse = `list users`().body()
-
-        assertEquals(HttpStatus.CREATED_201, creation1Response.statusCode())
         assertEquals(HttpStatus.CONFLICT_409, creation2Response.statusCode())
         JSONAssert.assertEquals(
             """ [ { "name": "Luís Soares", "email": "luis.1@gmail.com" }] """,
-            listResponse, false
+            `list users`().body(),
+            false
         )
     }
 

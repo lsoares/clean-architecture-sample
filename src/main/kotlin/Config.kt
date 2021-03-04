@@ -27,7 +27,7 @@ object ConfigWithMySql : Config() {
     override val repo by lazy {
         MySqlUserRepository(
             Database.connect(url = System.getenv("MYSQL_URL"), driver = "com.mysql.cj.jdbc.Driver")
-        ).also(MySqlUserRepository::updateSchema)
+        )
     }
 }
 

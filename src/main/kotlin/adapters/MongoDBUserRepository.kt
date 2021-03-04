@@ -18,16 +18,16 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
         .getDatabase(database)
         .getCollection<UserSchema>("users")
 
+    init {
+        usersColection.createIndex(Document("email", 1), IndexOptions().unique(true))
+    }
+
     private data class UserSchema(
         var id: String,
         val email: String,
         val name: String,
         var hashedPassword: String,
     )
-
-    fun createSchema() {
-        usersColection.createIndex(Document("email", 1), IndexOptions().unique(true))
-    }
 
     override fun findAll() =
         usersColection.find().toList().map {
@@ -56,9 +56,5 @@ class MongoDBUserRepository(host: String, port: Int, database: String) : UserRep
 
     override fun delete(email: Email) {
         usersColection.deleteOne(Document("email", email.value))
-    }
-
-    fun deleteAll() {
-        usersColection.deleteMany(Document())
     }
 }

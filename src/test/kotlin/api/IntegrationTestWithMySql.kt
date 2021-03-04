@@ -12,6 +12,9 @@ import com.wix.mysql.distribution.Version
 import domain.ports.UserRepository
 import org.eclipse.jetty.http.HttpStatus
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
@@ -24,6 +27,10 @@ class IntegrationTestWithMySql {
     private lateinit var webApp: WebApp
     private lateinit var dbServer: EmbeddedMysql
     private lateinit var userRepository: UserRepository
+    private val database = Database.connect(
+        url = "jdbc:mysql://user:pass@localhost:3301/test_schema",
+        driver = "com.mysql.cj.jdbc.Driver"
+    )
 
     @BeforeAll
     @Suppress("unused")
@@ -32,12 +39,7 @@ class IntegrationTestWithMySql {
             .withPort(3301)
             .withUser("user", "pass")
         dbServer = anEmbeddedMysql(config.build()).addSchema("test_schema").start()
-        userRepository = MySqlUserRepository(
-            Database.connect(
-                url = "jdbc:mysql://user:pass@localhost:3301/test_schema",
-                driver = "com.mysql.cj.jdbc.Driver"
-            )
-        ).also { it.updateSchema() }
+        userRepository = MySqlUserRepository(database)
         webApp = WebApp(object : Config() {
             override val repo get() = userRepository
         }, 8081).start()
@@ -45,7 +47,9 @@ class IntegrationTestWithMySql {
 
     @BeforeEach
     fun `before each`() {
-        (userRepository as MySqlUserRepository).deleteAll()
+        transaction(database) {
+            object : Table("users") {}.deleteAll()
+        }
     }
 
     @AfterAll

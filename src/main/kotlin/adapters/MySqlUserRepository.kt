@@ -11,6 +11,12 @@ import java.sql.SQLIntegrityConstraintViolationException
 
 class MySqlUserRepository(private val database: Database) : UserRepository {
 
+    init {
+        transaction(database) {
+            SchemaUtils.createMissingTablesAndColumns(UserSchema)
+        }
+    }
+
     private object UserSchema : Table("users") {
         val id = varchar("id", 36).primaryKey()
         val email = varchar("email", 50).uniqueIndex()
@@ -52,16 +58,6 @@ class MySqlUserRepository(private val database: Database) : UserRepository {
             UserSchema.deleteWhere {
                 UserSchema.email eq email.value
             }
-        }
-    }
-
-    fun deleteAll() {
-        transaction(database) { UserSchema.deleteAll() }
-    }
-
-    fun updateSchema() {
-        transaction(database) {
-            SchemaUtils.createMissingTablesAndColumns(UserSchema)
         }
     }
 }
