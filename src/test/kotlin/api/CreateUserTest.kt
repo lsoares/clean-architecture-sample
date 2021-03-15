@@ -21,36 +21,24 @@ import java.net.http.HttpResponse.BodyHandlers.ofString
 @DisplayName("Create user handler")
 class CreateUserTest {
 
-    private val createUser = mockk<CreateUser>()
-    private val httpClient = newHttpClient()
     private lateinit var server: Javalin
 
-    @BeforeAll
-    @Suppress("unused")
-    fun setup() {
-        server = Javalin.create()
-            .post("/", CreateUserHandler(createUser) { "id123".toUserId() })
-            .start(1234)
-    }
-
     @AfterEach
-    fun `after each`() = clearAllMocks()
-
-    @Suppress("unused")
-    @AfterAll
     fun `after all`() {
         server.stop()
     }
 
     @Test
     fun `create a user when posting its json`() {
-        every { createUser(any()) } returns NewUser
+        val createUser = mockk<CreateUser> {
+            every { this@mockk.invoke(any()) } returns NewUser
+        }
+        server = startFakeServer(createUser)
         val request = newBuilder()
             .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís", "password": "password"} """))
             .uri(URI("http://localhost:1234"))
-            .build()
 
-        val response = httpClient.send(request, ofString())
+        val response = newHttpClient().send(request.build(), ofString())
 
         verify(exactly = 1) {
             createUser(
@@ -67,13 +55,19 @@ class CreateUserTest {
 
     @Test
     fun `reply with 409 when posting an existing user`() {
-        every { createUser(any()) } returns UserAlreadyExists
-        val jsonBody = """{ "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"}"""
+        server = startFakeServer(createUser = mockk {
+            every { this@mockk.invoke(any()) } returns UserAlreadyExists
+        })
+        val request = newBuilder()
+            .uri(URI("http://localhost:1234"))
+            .POST(ofString("""{ "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"}"""))
 
-        val response = httpClient.send(
-            newBuilder().POST(ofString(jsonBody)).uri(URI("http://localhost:1234")).build(), ofString()
-        )
+        val response = newHttpClient().send(request.build(), ofString())
 
         assertEquals(HttpStatus.CONFLICT_409, response.statusCode())
     }
+
+    private fun startFakeServer(createUser: CreateUser) = Javalin.create()
+        .post("/", CreateUserHandler(createUser) { "id123".toUserId() })
+        .start(1234)
 }
