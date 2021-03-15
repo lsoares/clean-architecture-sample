@@ -1,6 +1,9 @@
 package domain.usecases
 
-import domain.model.*
+import domain.model.User
+import domain.model.toEmail
+import domain.model.toPassword
+import domain.model.toUserId
 import domain.ports.UserRepository
 import io.mockk.every
 import io.mockk.mockk

@@ -10,14 +10,14 @@ class UserTest {
     @Test
     fun `creates a user`() {
         assertDoesNotThrow {
-            User(email = "l@a.b".toEmail(), password = "12345".toPassword(), name = "Luís")
+            User(email = "l@a.b".toEmail(), password = "12345".toPassword(), name = "Luís", id = "id123".toUserId())
         }
     }
 
     @Test
     fun `throws validation exception`() {
         assertThrows<InvalidUser> {
-            User(email = "l@a.b".toEmail(), password = "12345".toPassword(), name = "L")
+            User(email = "l@a.b".toEmail(), password = "12345".toPassword(), name = "L", id = "id123".toUserId())
         }
     }
 }

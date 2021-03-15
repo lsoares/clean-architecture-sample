@@ -3,6 +3,7 @@ package api
 import domain.model.User
 import domain.model.toEmail
 import domain.model.toPassword
+import domain.model.toUserId
 import domain.ports.UserRepository.SaveResult.NewUser
 import domain.ports.UserRepository.SaveResult.UserAlreadyExists
 import domain.usecases.CreateUser
@@ -28,7 +29,7 @@ class CreateUserTest {
     @Suppress("unused")
     fun setup() {
         server = Javalin.create()
-            .post("/", CreateUserHandler(createUser))
+            .post("/", CreateUserHandler(createUser) { "id123".toUserId() })
             .start(1234)
     }
 
@@ -43,18 +44,18 @@ class CreateUserTest {
 
     @Test
     fun `create a user when posting its json`() {
-        val userCapture = slot<User>()
-        every { createUser(capture(userCapture)) } returns NewUser
+        every { createUser(any()) } returns NewUser
         val request = newBuilder()
             .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís", "password": "password"} """))
-            .uri(URI("http://localhost:1234")).build()
+            .uri(URI("http://localhost:1234"))
+            .build()
 
         val response = httpClient.send(request, ofString())
 
         verify(exactly = 1) {
             createUser(
                 User(
-                    userCapture.captured.id,
+                    id = "id123".toUserId(),
                     email = "luis.s@gmail.com".toEmail(),
                     name = "Luís",
                     password = "password".toPassword()

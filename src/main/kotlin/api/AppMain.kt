@@ -17,7 +17,7 @@ class WebApp(config: Config, private val port: Int) : AutoCloseable {
                 get { it.result("check health") }
                 path("users") {
                     get(ListUsersHandler(listUsers))
-                    post(CreateUserHandler(createUser))
+                    post(CreateUserHandler(createUser, generateUserId))
                     delete(":email", DeleteUserHandler(deleteUser))
                 }
             }

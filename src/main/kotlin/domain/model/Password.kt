@@ -1,7 +1,6 @@
 package domain.model
 
 import domain.model.Password.InvalidPassword
-import java.lang.Exception
 
 data class Password(val hashed: String) {
     class InvalidPassword : Exception()

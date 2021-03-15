@@ -5,6 +5,8 @@ import ConfigWithMongoDb
 import domain.model.User
 import domain.model.toEmail
 import domain.model.toPassword
+import domain.model.toUserId
+import java.util.*
 import kotlin.math.absoluteValue
 import kotlin.random.Random.Default.nextInt
 import kotlin.random.Random.Default.nextLong
@@ -30,6 +32,7 @@ private tailrec fun Config.repl() {
 }
 
 private fun generateRandomUser() = User(
+    id = UUID.randomUUID().toString().toUserId(),
     email = "random+${nextInt().absoluteValue}@email.com".toEmail(),
     name = "randomUser ${nextInt().absoluteValue}",
     password = nextLong().absoluteValue.toString().toPassword()
