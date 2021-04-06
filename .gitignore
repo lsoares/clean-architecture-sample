@@ -4,3 +4,4 @@ out
 .idea
 build
 target
+.DS_Store
