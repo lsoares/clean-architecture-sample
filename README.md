@@ -5,17 +5,5 @@ I created this repo for multiple reasons:
 - Fun
 
 ## Principles
-- Architecture
-    - Clean architecture
-    - Separation of config from app
-    - Dealing with exceptions
-- Testing
-    - TDD
-    - Given, When, Then
-    - Evident data
-    - Table driven testing
-- Use cases
-    - DTOs
-    - Command / query
-- Handlers
-    - REST maturity level
+  - Clean architecture
+  - TDD, Arranje/Act/Assert, Table driven testing
