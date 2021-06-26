@@ -27,21 +27,21 @@ class IntegrationTestWithMySql {
     private lateinit var webApp: WebApp
     private lateinit var dbServer: EmbeddedMysql
     private lateinit var userRepository: UserRepository
-    private val database = Database.connect(
-        url = "jdbc:mysql://user:pass@localhost:3301/test_schema",
-        driver = "com.mysql.cj.jdbc.Driver"
-    )
+    private lateinit var database: Database
 
     @BeforeAll
     @Suppress("unused")
     fun setup() {
-        val config = aMysqldConfig(Version.v5_7_latest)
-            .withPort(3301)
-            .withUser("user", "pass")
-        dbServer = anEmbeddedMysql(config.build()).addSchema("test_schema").start()
+        dbServer = anEmbeddedMysql(aMysqldConfig(Version.v5_7_latest).build())
+            .addSchema("test_schema")
+            .start()
+        database = with(dbServer.config) {  Database.connect(
+            url = "jdbc:mysql://$username:$password@localhost:$port/test_schema",
+            driver = "com.mysql.cj.jdbc.Driver"
+        ) }
         userRepository = MySqlUserRepository(database)
         webApp = WebApp(object : Config() {
-            override val repo get() = userRepository
+            override val repo = userRepository
         }, 8081).start()
     }
 

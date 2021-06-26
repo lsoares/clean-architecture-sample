@@ -5,6 +5,7 @@ import adapters.MongoDBUserRepository
 import api.HttpDsl.`create user`
 import api.HttpDsl.`delete user`
 import api.HttpDsl.`list users`
+import com.mongodb.client.MongoDatabase
 import de.flapdoodle.embed.mongo.MongodExecutable
 import de.flapdoodle.embed.mongo.MongodProcess
 import de.flapdoodle.embed.mongo.MongodStarter
@@ -26,26 +27,27 @@ import org.skyscreamer.jsonassert.JSONAssert
 class IntegrationTestWithMongoDB {
 
     private lateinit var webApp: WebApp
-    private lateinit var mongodExe: MongodExecutable
+    private lateinit var dbServer: MongodExecutable
     private lateinit var mongod: MongodProcess
     private lateinit var userRepository: UserRepository
-    private val database = KMongo
-        .createClient("localhost", 12345)
-        .getDatabase("db123")
+    private lateinit var database: MongoDatabase
 
     @BeforeAll
     @Suppress("unused")
     fun setup() {
-        mongodExe = MongodStarter.getDefaultInstance().prepare(
+        dbServer = MongodStarter.getDefaultInstance().prepare(
             MongodConfigBuilder()
                 .version(Version.Main.PRODUCTION)
                 .net(Net("localhost", 12345, Network.localhostIsIPv6()))
                 .build()
         )
-        mongod = mongodExe.start()
+        mongod = dbServer.start()
+        database = KMongo
+            .createClient("localhost", 12345)
+            .getDatabase("db123")
         userRepository = MongoDBUserRepository(database)
         webApp = WebApp(object : Config() {
-            override val repo get() = userRepository
+            override val repo = userRepository
         }, 8081).start()
     }
 
@@ -60,7 +62,7 @@ class IntegrationTestWithMongoDB {
     fun `after all`() {
         webApp.close()
         mongod.stop()
-        mongodExe.stop()
+        dbServer.stop()
     }
 
     @Test
