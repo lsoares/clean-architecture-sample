@@ -27,6 +27,8 @@ dependencies {
 
     testImplementation("com.wix:wix-embedded-mysql:4.+")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.+")
+    testImplementation("org.testcontainers:testcontainers:1.+")
+    testImplementation("org.testcontainers:mysql:1.+")
 
     testImplementation("au.com.dius:pact-jvm-consumer-junit5:4.+")
 }

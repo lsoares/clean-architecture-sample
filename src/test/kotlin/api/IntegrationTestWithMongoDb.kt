@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test
 import org.litote.kmongo.KMongo
 import org.skyscreamer.jsonassert.JSONAssert
 
-class IntegrationTestWithMongoDB {
+class IntegrationTestWithMongoDb {
 
     private lateinit var webApp: WebApp
     private lateinit var dbServer: MongodExecutable
