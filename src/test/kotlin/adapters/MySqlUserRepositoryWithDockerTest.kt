@@ -1,26 +1,26 @@
-package api
+package adapters
 
-import Config
-import adapters.MySqlUserRepository
-import api.HttpDsl.`create user`
-import api.HttpDsl.`list users`
+import domain.model.User
+import domain.model.toEmail
+import domain.model.toPassword
+import domain.model.toUserId
 import domain.ports.UserRepository
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.skyscreamer.jsonassert.JSONAssert
 import org.testcontainers.containers.MySQLContainer
 
-class IntegrationTestWithMySqlInDocker {
+class MySqlUserRepositoryWithDockerTest {
 
-    private lateinit var webApp: WebApp
-    private lateinit var userRepository: UserRepository
     private lateinit var dbServer: MySQLContainer<Nothing>
+    private lateinit var userRepository: UserRepository
     private lateinit var database: Database
 
     @BeforeAll
@@ -35,15 +35,11 @@ class IntegrationTestWithMySqlInDocker {
             driver = dbServer.driverClassName,
         )
         userRepository = MySqlUserRepository(database)
-        webApp = WebApp(object : Config() {
-            override val repo = userRepository
-        }, 8081).start()
     }
 
     @AfterAll
     @Suppress("unused")
     fun `tear down`() {
-        webApp.close()
         dbServer.stop()
     }
 
@@ -55,17 +51,22 @@ class IntegrationTestWithMySqlInDocker {
     }
 
     @Test
-    fun `create a user when posting a user json`() {
-        `create user`("luis.s@gmail.com", "Luís Soares", "password")
-        `create user`("miguel.s@gmail.com", "Miguel Soares", "f47!3#$5g%")
+    fun `store a user`() {
+        val user = User("123".toUserId(), "l@x.y".toEmail(), "name", "password".toPassword())
 
-        val userList = `list users`()
+        userRepository.save(user)
 
-        JSONAssert.assertEquals(
-            """ [ { "name": "Luís Soares", "email": "luis.s@gmail.com" },
-                            { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
-            userList.body(),
-            false
-        )
+        assertEquals(listOf(user), userRepository.findAll())
+    }
+
+    @Test
+    fun `delete a user`() {
+        val user = User("123".toUserId(), "l@x.y".toEmail(), "name", "password".toPassword())
+        userRepository.save(user)
+        assertTrue(userRepository.findAll().isNotEmpty())
+
+        userRepository.delete("l@x.y".toEmail())
+
+        assertTrue(userRepository.findAll().isEmpty())
     }
 }
