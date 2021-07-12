@@ -20,11 +20,9 @@ class ProfileGatewayTest {
     @Test
     fun `gets a user profile by id`() {
         fakeProfile = Javalin.create().get("profile/abc") {
-            // it.json(mapOf("id" to "abc", "email" to "x123@gmail.com"))
-            it.result(""" {"id": "abc", "email": "x123@gmail.com"} """)
-                .contentType("application/json")
+            it.json(mapOf("id" to "abc", "email" to "x123@gmail.com"))
         }.start(1234)
-        val profileGateway = ProfileGateway(apiUrl = "http://localhost:1234")
+        val profileGateway = ProfileGateway(apiUrl = "http://localhost:${fakeProfile.port()}")
 
         val result = profileGateway.fetchProfile("abc")
 
