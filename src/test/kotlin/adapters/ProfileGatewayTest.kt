@@ -3,42 +3,32 @@ package adapters
 import domain.model.Profile
 import domain.model.toEmail
 import io.javalin.Javalin
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert
 
 class ProfileGatewayTest {
 
-    private lateinit var fakeProfile: Javalin
-
-    @AfterEach
-    fun `after each`() {
-        fakeProfile.stop()
-    }
-
     @Test
-    fun `gets a user profile by id`() {
-        fakeProfile = Javalin.create().get("profile/abc") {
+    fun `gets a user profile by id`() = testProfileGateway { server, gatewayClient ->
+        server.get("profile/abc") {
             it.json(mapOf("id" to "abc", "email" to "x123@gmail.com"))
-        }.start(1234)
-        val profileGateway = ProfileGateway(apiUrl = "http://localhost:${fakeProfile.port()}")
+        }
 
-        val result = profileGateway.fetchProfile("abc")
+        val result = gatewayClient.fetchProfile("abc")
 
         assertEquals(Profile(id = "abc", email = "x123@gmail.com".toEmail()), result)
     }
 
     @Test
-    fun `posts a user profile`() {
+    fun `posts a user profile`() = testProfileGateway { server, profileGateway ->
         var postedBody: String? = null
         var contentType: String? = null
-        fakeProfile = Javalin.create().post("profile") {
+        server.post("profile") {
             postedBody = it.body()
             contentType = it.contentType()
             it.status(201)
-        }.start(1234)
-        val profileGateway = ProfileGateway(apiUrl = "http://localhost:1234")
+        }
 
         profileGateway.saveProfile(Profile(id = "abc", email = "x123@gmail.com".toEmail()))
 
@@ -47,5 +37,12 @@ class ProfileGatewayTest {
             postedBody, true
         )
         assertEquals("application/json", contentType)
+    }
+
+    private fun testProfileGateway(block: (Javalin, ProfileGateway) -> Unit) {
+        val server = Javalin.create().start()
+        val gatewayClient = ProfileGateway(apiUrl = "http://localhost:${server.port()}")
+        block(server, gatewayClient)
+        server.stop()
     }
 }
