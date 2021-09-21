@@ -1,8 +1,5 @@
 package adapters
 
-import com.wix.mysql.EmbeddedMysql
-import com.wix.mysql.config.MysqldConfig
-import com.wix.mysql.distribution.Version
 import domain.model.User
 import domain.model.toEmail
 import domain.model.toPassword
@@ -18,23 +15,25 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.testcontainers.containers.MySQLContainer
 
 class MySqlUserRepositoryTest {
 
-    private lateinit var dbServer: EmbeddedMysql
+    private lateinit var dbServer: MySQLContainer<Nothing>
     private lateinit var userRepository: UserRepository
-    private val database = Database.connect(
-        url = "jdbc:mysql://user:pass@localhost:3301/test_schema",
-        driver = "com.mysql.cj.jdbc.Driver"
-    )
+    private lateinit var database: Database
 
     @BeforeAll
     @Suppress("unused")
     fun setup() {
-        val config = MysqldConfig.aMysqldConfig(Version.v5_7_latest)
-            .withPort(3301)
-            .withUser("user", "pass")
-        dbServer = EmbeddedMysql.anEmbeddedMysql(config.build()).addSchema("test_schema").start()
+        dbServer = MySQLContainer<Nothing>("mysql")
+        dbServer.start()
+        database = Database.connect(
+            url = dbServer.jdbcUrl,
+            user = dbServer.username,
+            password = dbServer.password,
+            driver = dbServer.driverClassName,
+        )
         userRepository = MySqlUserRepository(database)
     }
 

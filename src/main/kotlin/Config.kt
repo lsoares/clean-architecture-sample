@@ -17,16 +17,6 @@ abstract class Config {
     abstract val repo: UserRepository
 }
 
-object ConfigWithMongoDb : Config() {
-    override val repo by lazy {
-        MongoDBUserRepository(
-            KMongo
-                .createClient(System.getenv("MONGODB_HOST"), System.getenv("MONGODB_PORT").toInt())
-                .getDatabase("clean_demo")
-        )
-    }
-}
-
 object ConfigWithMySql : Config() {
     override val repo by lazy {
         MySqlUserRepository(

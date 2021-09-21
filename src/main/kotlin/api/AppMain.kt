@@ -1,12 +1,12 @@
 package api
 
 import Config
-import ConfigWithMongoDb
+import ConfigWithMySql
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
 
 fun main() {
-    WebApp(ConfigWithMongoDb, System.getenv("PORT")?.toInt() ?: 8080).start()
+    WebApp(ConfigWithMySql, System.getenv("PORT")?.toInt() ?: 8080).start()
 }
 
 class WebApp(config: Config, private val port: Int) : AutoCloseable {
@@ -18,7 +18,7 @@ class WebApp(config: Config, private val port: Int) : AutoCloseable {
                 path("users") {
                     get(ListUsersHandler(listUsers))
                     post(CreateUserHandler(createUser, generateUserId))
-                    delete(":email", DeleteUserHandler(deleteUser))
+                    delete("{email}", DeleteUserHandler(deleteUser))
                 }
             }
         }

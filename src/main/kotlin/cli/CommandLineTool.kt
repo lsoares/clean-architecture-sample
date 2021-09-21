@@ -1,7 +1,6 @@
 package cli
 
 import Config
-import ConfigWithMongoDb
 import domain.model.User
 import domain.model.toEmail
 import domain.model.toPassword
@@ -13,13 +12,13 @@ import kotlin.random.Random.Default.nextLong
 import kotlin.system.exitProcess
 
 fun main() {
-    ConfigWithMongoDb.repl()
+    ConfigWithMySql.repl()
 }
 
 private tailrec fun Config.repl() {
     print("> ")
     runCatching {
-        when (readLine()?.firstOrNull()?.toUpperCase() ?: '?') {
+        when (readLine()?.firstOrNull()?.uppercase() ?: '?') {
             'R' -> this@repl.createUser(generateRandomUser())
             'I' -> this@repl.createUser(generateRandomUser().copy(email = "invalid".toEmail()))
             'L' -> this@repl.listUsers().forEach(::println)

@@ -18,7 +18,8 @@ class CreateUserHandler(
 
     override fun handle(ctx: Context) {
         val createUserResult = createUser(
-            ctx.body<UserRepresenter>().toUser(generateUserId())
+            ctx.bodyAsClass(UserRepresenter::class.java)
+                .toUser(generateUserId())
         )
         ctx.status(
             when (createUserResult) {
