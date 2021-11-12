@@ -1,4 +1,3 @@
-import adapters.MongoDBUserRepository
 import adapters.MySqlUserRepository
 import domain.model.toUserId
 import domain.ports.UserRepository
@@ -6,7 +5,6 @@ import domain.usecases.CreateUser
 import domain.usecases.DeleteUser
 import domain.usecases.ListUsers
 import org.jetbrains.exposed.sql.Database
-import org.litote.kmongo.KMongo
 import java.util.*
 
 abstract class Config {
@@ -24,4 +22,3 @@ object ConfigWithMySql : Config() {
         )
     }
 }
-
