@@ -1,73 +1,118 @@
 package api
 
-import domain.model.User
-import domain.model.toEmail
-import domain.model.toPassword
-import domain.model.toUserId
-import domain.ports.UserRepository.SaveResult.NewUser
-import domain.ports.UserRepository.SaveResult.UserAlreadyExists
-import domain.usecases.CreateUser
-import io.javalin.Javalin
-import io.mockk.*
-import org.eclipse.jetty.http.HttpStatus
-import org.junit.jupiter.api.*
+import Config
+import adapters.MySqlUserRepository
+import api.HttpDsl.`create user`
+import api.HttpDsl.`delete user`
+import api.HttpDsl.`list users`
+import domain.ports.UserRepository
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
-import java.net.URI
-import java.net.http.HttpClient.newHttpClient
-import java.net.http.HttpRequest.BodyPublishers.ofString
-import java.net.http.HttpRequest.newBuilder
-import java.net.http.HttpResponse.BodyHandlers.ofString
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.skyscreamer.jsonassert.JSONAssert
+import org.testcontainers.containers.MySQLContainer
 
-@DisplayName("Create user handler")
 class CreateUserTest {
 
-    private lateinit var server: Javalin
+    private lateinit var webApp: WebApp
+    private lateinit var userRepository: UserRepository
+    private lateinit var dbServer: MySQLContainer<Nothing>
+    private lateinit var database: Database
 
-    @AfterEach
-    fun `after all`() {
-        server.stop()
+    @BeforeAll
+    @Suppress("unused")
+    fun setup() {
+        dbServer = MySQLContainer<Nothing>("mysql")
+        dbServer.start()
+        database = Database.connect(
+            url = dbServer.jdbcUrl,
+            user = dbServer.username,
+            password = dbServer.password,
+            driver = dbServer.driverClassName,
+        )
+        userRepository = MySqlUserRepository(database)
+        webApp = WebApp(object : Config() {
+            override val repo = userRepository
+        }, 8081).start()
+    }
+
+    @AfterAll
+    @Suppress("unused")
+    fun `tear down`() {
+        webApp.close()
+        dbServer.stop()
+    }
+
+    @BeforeEach
+    fun `before each`() {
+        transaction(database) {
+            object : Table("users") {}.deleteAll()
+        }
     }
 
     @Test
-    fun `create a user when posting its json`() {
-        val createUser = mockk<CreateUser> {
-            every { this@mockk.invoke(any()) } returns NewUser
-        }
-        server = startFakeServer(createUser)
-        val request = newBuilder()
-            .POST(ofString(""" { "email": "luis.s@gmail.com", "name": "Luís", "password": "password"} """))
-            .uri(URI("http://localhost:1234"))
+    fun `create a user`() {
+        `create user`("luis.s@gmail.com", "Luís Soares", "password")
+        `create user`("miguel.s@gmail.com", "Miguel Soares", "f47!3#$5g%")
 
-        val response = newHttpClient().send(request.build(), ofString())
+        val userList = `list users`()
 
-        verify(exactly = 1) {
-            createUser(
-                User(
-                    id = "id123".toUserId(),
-                    email = "luis.s@gmail.com".toEmail(),
-                    name = "Luís",
-                    password = "password".toPassword()
-                )
-            )
-        }
-        assertEquals(HttpStatus.CREATED_201, response.statusCode())
+        JSONAssert.assertEquals(
+            """ [ { "name": "Luís Soares", "email": "luis.s@gmail.com" },
+                            { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
+            userList.body(),
+            false
+        )
     }
 
     @Test
-    fun `reply with 409 when posting an existing user`() {
-        server = startFakeServer(createUser = mockk {
-            every { this@mockk.invoke(any()) } returns UserAlreadyExists
-        })
-        val request = newBuilder()
-            .uri(URI("http://localhost:1234"))
-            .POST(ofString("""{ "email": "luis.s@gmail.com", "name": "Luís Soares", "password": "password"}"""))
+    fun `create two users`() {
+        `create user`("luis.s@gmail.com", "Luís Soares", "password")
+        `create user`("miguel.s@gmail.com", "Miguel Soares", "f47!3#$5g%")
 
-        val response = newHttpClient().send(request.build(), ofString())
+        val userList = `list users`()
 
-        assertEquals(HttpStatus.CONFLICT_409, response.statusCode())
+        JSONAssert.assertEquals(
+            """ [ { "name": "Luís Soares", "email": "luis.s@gmail.com" },
+                            { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
+            userList.body(),
+            false
+        )
     }
 
-    private fun startFakeServer(createUser: CreateUser) = Javalin.create()
-        .post("/", CreateUserHandler(createUser) { "id123".toUserId() })
-        .start(1234)
+    @Test
+    fun `do not create a repeated user`() {
+        `create user`("luis.1@gmail.com", "Luís Soares", "password")
+
+        val creation2Response = `create user`("luis.1@gmail.com", "Luís Soares", "password")
+
+        assertEquals(409, creation2Response.statusCode())
+        JSONAssert.assertEquals(
+            """ [ { "name": "Luís Soares", "email": "luis.1@gmail.com" }] """,
+            `list users`().body(),
+            false
+        )
+    }
+
+    @Test
+    fun `delete a user`() {
+        `create user`("luis.s@gmail.com", "Luís Soares", "password")
+        `create user`("miguel.s@gmail.com", "Miguel Soares", "f47!3#\$5g%")
+
+        val deleteResponse = `delete user`("luis.s@gmail.com")
+
+        assertEquals(204, deleteResponse.statusCode())
+        val usersAfter = `list users`()
+        JSONAssert.assertEquals(
+            """ [ { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
+            usersAfter.body(),
+            false
+        )
+    }
 }
