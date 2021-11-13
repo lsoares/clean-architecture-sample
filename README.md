@@ -12,6 +12,7 @@ I created this repo for multiple reasons:
 
 ## Principles
 - no frameworks
+- minimalist approach
 - simple crud: create, delete, and list user with API; can't create twice
 - follow ports & adapters architecture
 - feature driven - web handlers and domain features are split by files 
