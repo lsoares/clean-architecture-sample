@@ -57,7 +57,7 @@ class CreateUserTest {
     }
 
     @Test
-    fun `create a user`() {
+    fun `create users`() {
         `create user`("luis.s@gmail.com", "Luís Soares", "password")
         `create user`("miguel.s@gmail.com", "Miguel Soares", "f47!3#$5g%")
 
@@ -72,22 +72,7 @@ class CreateUserTest {
     }
 
     @Test
-    fun `create two users`() {
-        `create user`("luis.s@gmail.com", "Luís Soares", "password")
-        `create user`("miguel.s@gmail.com", "Miguel Soares", "f47!3#$5g%")
-
-        val userList = `list users`()
-
-        JSONAssert.assertEquals(
-            """ [ { "name": "Luís Soares", "email": "luis.s@gmail.com" },
-                            { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
-            userList.body(),
-            false
-        )
-    }
-
-    @Test
-    fun `do not create a repeated user`() {
+    fun `do not allow creating user with same email`() {
         `create user`("luis.1@gmail.com", "Luís Soares", "password")
 
         val creation2Response = `create user`("luis.1@gmail.com", "Luís Soares", "password")
