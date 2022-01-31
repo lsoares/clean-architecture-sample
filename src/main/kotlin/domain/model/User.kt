@@ -1,7 +1,7 @@
 package domain.model
 
 data class User(
-    var id: UserId,
+    val id: UserId,
     val email: Email,
     val name: String,
     val password: Password

@@ -57,15 +57,12 @@ class CreateUserTest {
     }
 
     @Test
-    fun `create users`() {
+    fun `create a user`() {
         `create user`("luis.s@gmail.com", "Luís Soares", "password")
-        `create user`("miguel.s@gmail.com", "Miguel Soares", "f47!3#$5g%")
 
         val userList = `list users`()
-
         JSONAssert.assertEquals(
-            """ [ { "name": "Luís Soares", "email": "luis.s@gmail.com" },
-                            { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
+            """ [ { "name": "Luís Soares", "email": "luis.s@gmail.com" } ] """,
             userList.body(),
             false
         )
