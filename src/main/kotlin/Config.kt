@@ -9,9 +9,9 @@ import java.util.*
 
 abstract class Config {
     open val listUsers by lazy { ListUsers(repo) }
-    open val createUser by lazy { CreateUser(repo) }
+    private val generateUserId = { UUID.randomUUID().toString().toUserId() }
+    open val createUser by lazy { CreateUser(repo, generateUserId) }
     open val deleteUser by lazy { DeleteUser(repo) }
-    val generateUserId = { UUID.randomUUID().toString().toUserId() }
     abstract val repo: UserRepository
 }
 

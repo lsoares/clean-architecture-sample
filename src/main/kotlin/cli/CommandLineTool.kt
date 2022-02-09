@@ -1,11 +1,8 @@
 package cli
 
 import Config
-import domain.model.User
-import domain.model.toEmail
-import domain.model.toPassword
-import domain.model.toUserId
-import java.util.*
+import ConfigWithMySql
+import domain.usecases.CreateUser
 import kotlin.math.absoluteValue
 import kotlin.random.Random.Default.nextInt
 import kotlin.random.Random.Default.nextLong
@@ -20,7 +17,7 @@ private tailrec fun Config.repl() {
     runCatching {
         when (readLine()?.firstOrNull()?.uppercase() ?: '?') {
             'R' -> this@repl.createUser(generateRandomUser())
-            'I' -> this@repl.createUser(generateRandomUser().copy(email = "invalid".toEmail()))
+            'I' -> this@repl.createUser(generateRandomUser().copy(email = "invalid"))
             'L' -> this@repl.listUsers().forEach(::println)
             'Q' -> exitProcess(0)
             else -> println("please type R, I, L or Q")
@@ -30,11 +27,10 @@ private tailrec fun Config.repl() {
     repl()
 }
 
-private fun generateRandomUser() = User(
-    id = UUID.randomUUID().toString().toUserId(),
-    email = "random+${nextInt().absoluteValue}@email.com".toEmail(),
+private fun generateRandomUser() = CreateUser.Request(
+    email = "random+${nextInt().absoluteValue}@email.com",
     name = "randomUser ${nextInt().absoluteValue}",
-    password = nextLong().absoluteValue.toString().toPassword()
+    password = nextLong().absoluteValue.toString()
 )
 
 /*
