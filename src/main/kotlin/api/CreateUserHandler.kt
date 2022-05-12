@@ -15,11 +15,10 @@ class CreateUserHandler(
         val createUserResult = createUser(
             ctx.bodyAsClass(CreateUser.Request::class.java)
         )
-        ctx.status(
-            when (createUserResult) {
-                NewUser -> HttpStatus.CREATED_201
-                UserAlreadyExists -> HttpStatus.CONFLICT_409
-            }
-        )
+        val result = when (createUserResult) {
+            NewUser -> HttpStatus.CREATED_201
+            UserAlreadyExists -> HttpStatus.CONFLICT_409
+        }
+        ctx.status(result)
     }
 }
