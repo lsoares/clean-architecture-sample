@@ -12,10 +12,9 @@ class CreateUserHandler(
 ) : Handler {
 
     override fun handle(ctx: Context) {
-        val result = when (createUser(ctx.bodyAsClass())) {
+        when (createUser(ctx.bodyAsClass())) {
             NewUser -> HttpStatus.CREATED_201
             UserAlreadyExists -> HttpStatus.CONFLICT_409
-        }
-        ctx.status(result)
+        }.let(ctx::status)
     }
 }
