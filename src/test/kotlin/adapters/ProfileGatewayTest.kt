@@ -1,11 +1,11 @@
 package adapters
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import domain.model.Profile
 import domain.model.toEmail
 import io.javalin.Javalin
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.skyscreamer.jsonassert.JSONAssert
 
 class ProfileGatewayTest {
 
@@ -32,9 +32,9 @@ class ProfileGatewayTest {
 
         profileGateway.saveProfile(Profile(id = "abc", email = "x123@gmail.com".toEmail()))
 
-        JSONAssert.assertEquals(
-            """ { "id": "abc", "email": "x123@gmail.com"}  """,
-            postedBody, true
+        assertEquals(
+            ObjectMapper().readTree(""" { "id": "abc", "email": "x123@gmail.com"} """),
+            ObjectMapper().readTree(postedBody)
         )
         assertEquals("application/json", contentType)
     }

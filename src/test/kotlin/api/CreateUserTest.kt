@@ -5,6 +5,7 @@ import adapters.MySqlUserRepository
 import api.HttpDsl.`create user`
 import api.HttpDsl.`delete user`
 import api.HttpDsl.`list users`
+import com.fasterxml.jackson.databind.ObjectMapper
 import domain.ports.UserRepository
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Table
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.skyscreamer.jsonassert.JSONAssert
 import org.testcontainers.containers.MySQLContainer
 
 class CreateUserTest {
@@ -61,10 +61,10 @@ class CreateUserTest {
         `create user`("luis.s@gmail.com", "Luís Soares", "password")
 
         val userList = `list users`()
-        JSONAssert.assertEquals(
-            """ [ { "name": "Luís Soares", "email": "luis.s@gmail.com" } ] """,
-            userList.body(),
-            false
+
+        assertEquals(
+            ObjectMapper().readTree(""" [ { "name": "Luís Soares", "email": "luis.s@gmail.com" } ] """),
+            ObjectMapper().readTree(userList.body()),
         )
     }
 
@@ -75,10 +75,9 @@ class CreateUserTest {
         val creation2Response = `create user`("luis.1@gmail.com", "Luís Soares", "password")
 
         assertEquals(409, creation2Response.statusCode())
-        JSONAssert.assertEquals(
-            """ [ { "name": "Luís Soares", "email": "luis.1@gmail.com" }] """,
-            `list users`().body(),
-            false
+        assertEquals(
+            ObjectMapper().readTree(""" [ { "name": "Luís Soares", "email": "luis.1@gmail.com" }] """),
+            ObjectMapper().readTree(`list users`().body()),
         )
     }
 
@@ -91,10 +90,9 @@ class CreateUserTest {
 
         assertEquals(204, deleteResponse.statusCode())
         val usersAfter = `list users`()
-        JSONAssert.assertEquals(
-            """ [ { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """,
-            usersAfter.body(),
-            false
+        assertEquals(
+            ObjectMapper().readTree(""" [ { "name": "Miguel Soares", "email": "miguel.s@gmail.com" } ] """),
+            ObjectMapper().readTree(usersAfter.body()),
         )
     }
 }

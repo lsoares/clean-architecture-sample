@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.+"
+    kotlin("jvm") version "1.7.21"
 }
 
 group = "com.luissoares"
@@ -21,7 +21,6 @@ dependencies {
     implementation("mysql:mysql-connector-java:8.+")
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.+")
-    testImplementation("org.skyscreamer:jsonassert:1.+")
 
     testImplementation("org.testcontainers:testcontainers:1.+")
     testImplementation("org.testcontainers:mysql:1.+")
