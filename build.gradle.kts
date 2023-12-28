@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.9.22"
 }
 
 group = "com.luissoares"
@@ -12,7 +12,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
 
-    implementation("io.javalin:javalin:4.+")
+    implementation("io.javalin:javalin:5.+")
     implementation("org.slf4j:slf4j-simple:1.+")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.+")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.+")
@@ -30,7 +30,7 @@ dependencies {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 

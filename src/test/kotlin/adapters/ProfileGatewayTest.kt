@@ -7,42 +7,41 @@ import io.javalin.Javalin
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
+
 class ProfileGatewayTest {
 
     @Test
-    fun `gets a user profile by id`() = testProfileGateway { server, gatewayClient ->
-        server.get("profile/abc") {
+    fun `gets a user profile by id`() {
+        Javalin.create().get("profile/abc") {
             it.json(mapOf("id" to "abc", "email" to "x123@gmail.com"))
+        }.start().use {
+            val gatewayClient = ProfileGateway(apiUrl = "http://localhost:${it.port()}")
+
+            val result = gatewayClient.fetchProfile("abc")
+
+            assertEquals(Profile(id = "abc", email = "x123@gmail.com".toEmail()), result)
         }
-
-        val result = gatewayClient.fetchProfile("abc")
-
-        assertEquals(Profile(id = "abc", email = "x123@gmail.com".toEmail()), result)
     }
 
     @Test
-    fun `posts a user profile`() = testProfileGateway { server, profileGateway ->
+    fun `posts a user profile`() {
         var postedBody: String? = null
         var contentType: String? = null
-        server.post("profile") {
+        Javalin.create().start().post("profile") {
             postedBody = it.body()
             contentType = it.contentType()
             it.status(201)
+        }.use {
+            val gatewayClient = ProfileGateway(apiUrl = "http://localhost:${it.port()}")
+
+            gatewayClient.saveProfile(Profile(id = "abc", email = "x123@gmail.com".toEmail()))
+
+            assertEquals(
+                ObjectMapper().valueToTree(mapOf("id" to "abc", "email" to "x123@gmail.com")),
+                ObjectMapper().readTree(postedBody)
+            )
+            assertEquals("application/json", contentType)
         }
-
-        profileGateway.saveProfile(Profile(id = "abc", email = "x123@gmail.com".toEmail()))
-
-        assertEquals(
-            ObjectMapper().readTree(""" { "id": "abc", "email": "x123@gmail.com"} """),
-            ObjectMapper().readTree(postedBody)
-        )
-        assertEquals("application/json", contentType)
     }
 
-    private fun testProfileGateway(block: (Javalin, ProfileGateway) -> Unit) {
-        val server = Javalin.create().start()
-        val gatewayClient = ProfileGateway(apiUrl = "http://localhost:${server.port()}")
-        block(server, gatewayClient)
-        server.stop()
-    }
 }

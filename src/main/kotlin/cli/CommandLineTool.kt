@@ -15,7 +15,7 @@ fun main() {
 private tailrec fun Config.repl() {
     print("> ")
     runCatching {
-        when (readLine()?.firstOrNull()?.uppercase() ?: '?') {
+        when (readlnOrNull()?.firstOrNull()?.uppercase() ?: '?') {
             'R' -> this@repl.createUser(generateRandomUser())
             'I' -> this@repl.createUser(generateRandomUser().copy(email = "invalid"))
             'L' -> this@repl.listUsers().forEach(::println)
